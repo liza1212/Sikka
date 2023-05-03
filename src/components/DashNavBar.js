@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { styled } from '@mui/material/styles';
+import { styled,createTheme, ThemeProvider } from '@mui/material/styles';
 import MuiAppBar from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer'
 import Divider from '@mui/material/Divider';
@@ -17,6 +17,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import {mainListItems } from './ListItems'
 import RecentTransactions from './Orders';
+import Chart from './Chart';
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -63,6 +64,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const drawerWidth = 240;
+const mdTheme = createTheme();
 
 const DashNavbar=()=>{
     const [open, setopen] = React.useState(true);
@@ -70,7 +72,10 @@ const DashNavbar=()=>{
         setopen(!open)
     }
     return (
-        <Box sx={{ flexGrow: 1 }}>
+  <ThemeProvider theme={mdTheme}>
+        {/* <Box sx={{ flexGrow: 1 }}> */}
+        <Box sx={{ display: 'flex' }}>
+
       <AppBar position="absolute" open={open}>
         <Toolbar sx={{
           pr:'24px',
@@ -130,7 +135,7 @@ const DashNavbar=()=>{
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Chart */}
-              {/* <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
                     p: 2,
@@ -141,7 +146,7 @@ const DashNavbar=()=>{
                 >
                   <Chart />
                 </Paper>
-              </Grid> */}
+              </Grid>
               {/* Recent Deposits */}
               {/* <Grid item xs={12} md={4} lg={3}>
                 <Paper
@@ -167,6 +172,7 @@ const DashNavbar=()=>{
 
         </Box>
     </Box>
+    </ThemeProvider>
     )
 }
 
