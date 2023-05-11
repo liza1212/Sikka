@@ -18,7 +18,9 @@
     "react-scripts": "5.0.1",
     "recharts": "^2.5.0",
     "styled-components": "^5.3.10",
-    "web-vitals": "^2.1.4"
+    "truffle-plugin-verify": "^0.6.3",
+    "web-vitals": "^2.1.4",
+    "web3": "^1.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -43,5 +45,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "webpack": "^5.82.1",
+    "webpack-cli": "^5.1.1"
   }
 }
