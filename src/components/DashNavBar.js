@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled,createTheme, ThemeProvider } from '@mui/material/styles';
@@ -12,12 +13,18 @@ import MuiDrawer from '@mui/material/Drawer'
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import List from '@mui/material/List';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import {mainListItems } from './ListItems'
-import RecentTransactions from './Orders';
-import Chart from './Chart';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import GroupIcon from '@mui/icons-material/Group';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import Dashboard from './Dashboard';
+import Friends from './Friends';
+import Reports from './Reports';
+import Groups from './Groups';
+
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -66,11 +73,31 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const drawerWidth = 240;
 const mdTheme = createTheme();
 
-const DashNavbar=()=>{
+const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount})=>{
+    const [menuItem,setMenuItem] = React.useState("Dashboard");
     const [open, setopen] = React.useState(true);
     const toggleDrawer=()=>{
         setopen(!open)
     }
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+    
+    const logoutWallet = ()=>{
+      setCurrentAccount(null) 
+      handleClose()
+    }
+
+  const popOpen = Boolean(anchorEl);
+
+ 
+
     return (
   <ThemeProvider theme={mdTheme}>
         {/* <Box sx={{ flexGrow: 1 }}> */}
@@ -96,7 +123,26 @@ const DashNavbar=()=>{
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             SIKKA
           </Typography>
-          <Button color="inherit">Login</Button>
+          
+          {currentAccount ? (
+          <div>
+            <Button  aria-describedby={popOpen ? 'logout-popover' : undefined}  variant="contained" color="success" onClick={handleClick}>{currentAccount}</Button>
+                <Popover
+                  id="logout-popover"
+                  open={popOpen}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                >
+                  <Button variant ="outlined" onClick={logoutWallet}>Logout</Button>
+                </Popover>
+          </div>   
+            ) : (
+                  <Button variant='contained' onClick={loadWeb3}>Login</Button>
+            )}
         </Toolbar>
       </AppBar>
       {/* <Box> */}
@@ -115,7 +161,30 @@ const DashNavbar=()=>{
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+            <ListItemButton onClick={()=>setMenuItem("Dashboard")}>
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItemButton>
+          <ListItemButton onClick={()=>setMenuItem("Groups")}>
+            <ListItemIcon>
+              <GroupIcon />
+            </ListItemIcon>
+            <ListItemText primary="Groups" />
+          </ListItemButton>
+          <ListItemButton onClick={()=>setMenuItem("Friends")}>
+            <ListItemIcon>
+              <GroupAddIcon />
+            </ListItemIcon>
+            <ListItemText primary="Friends" />
+          </ListItemButton>
+          <ListItemButton onClick={()=>setMenuItem("Reports")}>
+            <ListItemIcon>
+              <BarChartIcon />
+            </ListItemIcon>
+            <ListItemText primary="Reports" />
+          </ListItemButton>
           </List>
         </Drawer>
         {/* </Box> */}
@@ -132,43 +201,10 @@ const DashNavbar=()=>{
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              {/* <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid> */}
-              {/* Recent Transactions */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <RecentTransactions />
-                </Paper>
-              </Grid>
-            </Grid>
-            {/* <Copyright sx={{ pt: 4 }} /> */}
-          </Container>
+        {menuItem === "Dashboard" && <Dashboard/>}  
+        {menuItem === "Groups" && <Groups/>}  
+        {menuItem === "Friends" && <Friends/>}  
+        {menuItem === "Reports" && <Reports/>}  
 
         </Box>
     </Box>
