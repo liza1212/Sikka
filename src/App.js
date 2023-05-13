@@ -1,39 +1,82 @@
 import React,{useState,useEffect} from 'react';
 import './App.css';
 import Web3 from 'web3';
+import Sikka from './contracts/Sikka.json'
 import UserProfile from './pages/UserProfile';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
-  const loadWeb3 = async () => {
-    // Modern dapp browsers...
-    if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        try {
+  const [state, setState] = useState({web3:null,contract:null});
+
+
+  async function loadWeb3(){
+    let provider;
+    // Is there an injected web3 instance?
+    if (typeof Web3 !== "undefined") {
+        // provider = Web3.currentProvider;
+        // App.networkId = Web3.currentProvider.networkVersion;
+        if (window.ethereum) {
+            provider = window.ethereum
+            // console.log("Modern dapp")
             await window.ethereum.enable();
-            const { web3 } = window;
-            const accounts = await web3.eth.getAccounts();
-            setCurrentAccount(accounts[0]);
-        } catch (error) {
-            console.log(error)
         }
-    }
-    // Legacy dapp Browser...
-    else if (window.web3) {
-        window.web3 = new Web3(window.web3.currentProvider);
-    } else {
-        console.log("No metamask found")
-    }
-};
+        // Legacy dapp Browser...
+        else if (window.web3) {
+            provider = window.web3.currentProvider
+            // console.log("Legacy Dapp")
+        }
+            // window.web3 = new Web3(window.web3.currentProvider);
+        } else {
+        // If no injected web3 instance is detected, fall back to Ganache
+        // Only useful in a development environment
+        provider = new Web3.providers.HttpProvider(
+        "http://localhost:7545"
+        );
+        // console.log("Gnache")
+        }   
+        
+        const web3 = new Web3(provider);
 
-useEffect(() => {
-    try{
-        window.ethereum.on('accountsChanged', ()=>{loadWeb3()});
-    }catch(error){
-        console.log("No metamask found")
-    }
-}, []);
+        const account = await web3.eth.getAccounts();
+        // console.log("Account",account)
+        setCurrentAccount(account[0]);
 
+
+        const networkId = await web3.eth.net.getId();
+        // console.log(web3)
+        const deployedNetwork = Sikka.networks[networkId];
+        // console.log(deployedNetwork.address)
+        const contract = new web3.eth.Contract(Sikka.abi,deployedNetwork.address);
+        // console.log(contract)// new instance 
+        setState({web3:web3,contract:contract})
+        
+    }
+
+    function handleAccountsChanged(accounts) {
+        // Handle account changes
+        if (accounts.length > 0) {
+          // New account is connected
+          const newAccount = accounts[0];
+          console.log('New account connected:', newAccount);
+          loadWeb3()
+          // Perform necessary actions with the new account
+        } else {
+          // No account is connected
+          console.log('No account connected');
+          // Perform necessary actions when no account is connected
+        }
+      }
+
+  
+  useEffect(()=>{
+    loadWeb3()
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
+      
+  },[])
+
+
+
+console.log(state)
   
   return (
     <div>

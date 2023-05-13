@@ -18,6 +18,7 @@ const Reports = () => {
                     flexDirection: 'column',
                     height: 240,
                     alignItems:'center'
+                    alignItems:'center'
                   }}
                 >
                   <Chart />
