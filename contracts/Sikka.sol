@@ -20,7 +20,6 @@ contract Sikka{
         mapping (address => uint256) contributors;
         address[] nonpaid;
         mapping(address=>mapping(address=>uint256))  topay;
-
     }
     
     mapping(address => Group) public groups;
@@ -33,7 +32,6 @@ contract Sikka{
         group.members.push(msg.sender);
         group.isMember[msg.sender] = true;
         groupOwners.push(msg.sender); // Add the group owner to the groupOwners array
-        
     }
 
     function addExpense(
@@ -64,22 +62,23 @@ contract Sikka{
         require(!group.isMember[_member], "Member already exists");
         group.members.push(_member);
         group.isMember[_member] = true;
-
     }
 
+    function getMembers(address _groupOwner) public view returns (address[] memory){
+        Group storage group= groups[_groupOwner];
+        return group.members;
+    }
 
     function isGroupExist(address _groupOwner) public view returns (bool) {
         Group storage group = groups[_groupOwner];
         return bytes(group.name).length > 0;
     }
 
-        //groupCount
+    //groupCount
      function getGroupCount() public view returns (uint256) {
         return groupOwners.length;
     }
 
-
-    
      // Function to retrieve a specific group by index
     function getGroup(uint256 index) public view returns (string memory, address,address[] memory, string[] memory, uint256[] memory) {
         require(index < groupOwners.length, "Invalid group index");
@@ -99,6 +98,19 @@ contract Sikka{
         }
         return (group.name, groupOwner,group.members, descriptions, amounts);
     }
+
+    function getContributors(address _groupOwner) public view returns(address[] memory ){
+        Group storage group = groups[_groupOwner];
+        address [] memory contributorList=new address[](group.expenseCount);
+        uint index = 0;
+        for(uint i = 0;i<group.expenseCount;i++ ){
+            Expense storage expense = group.expenses[i];
+            contributorList[index]=expense.contributor;
+            index ++;
+        }  
+        return contributorList;
+    }
+
 
    //calculate average
    function calculateAvg(address _groupOwner) public view returns(uint256){
@@ -182,6 +194,26 @@ contract Sikka{
     function getTopay(address from, address to, address _groupOwner) public view returns(uint256) {
         Group storage group = groups[_groupOwner];
         return group.topay[from][to];
+    }
+
+    function getMemberedGroups(address _ownerAddress) public view returns (address[] memory, string[] memory){
+        uint256 groupCount = getGroupCount();
+        address[] memory groupList = new address[](groupCount);
+        string[] memory groupNameList= new string[](groupCount);
+        uint256 index = 0;
+        while (groupCount > 0) {
+            Group storage group = groups[groupOwners[groupCount - 1]];
+            for (uint256 i = 0; i < group.members.length; i++) {
+                if (_ownerAddress == group.members[i]){
+                    groupList[index] = groupOwners[groupCount - 1];
+                    groupNameList[index]=group.name;
+                    index++;
+                    break;
+                }
+            }
+            groupCount--;
+        }
+        return (groupList,groupNameList);
     }
 
     
