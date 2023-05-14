@@ -200,10 +200,9 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount})=>{
         >
           <Toolbar />
         {menuItem === "Dashboard" && <Dashboard/>}  
-        {menuItem === "Groups" && <Groups setMenuItem={setMenuItem}/>}  
+        {menuItem === "Groups" && <Groups/>}  
         {menuItem === "Friends" && <Friends/>}  
         {menuItem === "Reports" && <Reports/>}  
-        {menuItem==="GroupInfo" && <GroupInfo/>}
 
         </Box>
     </Box>

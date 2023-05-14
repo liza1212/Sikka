@@ -1,3 +1,4 @@
+import { Button } from '@mui/base'
 import React from 'react'
 
 const GroupInfo = ({groupName}) => {
@@ -6,8 +7,8 @@ const GroupInfo = ({groupName}) => {
     // }
 
   return (
-    <div>GroupInfo
-    <h1 >{groupName}</h1>
+    <div>
+        <h1>{groupName}</h1>
     </div>
   )
 }

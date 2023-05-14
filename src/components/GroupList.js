@@ -26,7 +26,7 @@ const GroupList = () => {
             </ListItemButton>
             ))}
         </List>
-        <GroupInfo groupName={groupName} open={open}></GroupInfo>
+        <GroupInfo></GroupInfo>
         
 
     </div>
