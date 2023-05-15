@@ -24,7 +24,7 @@ import Dashboard from './Dashboard';
 import Friends from './Friends';
 import Reports from './Reports';
 import Groups from './Groups';
-
+import GroupInfo from './GroupInfo';
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -95,8 +95,6 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount})=>{
     }
 
   const popOpen = Boolean(anchorEl);
-
- 
 
     return (
   <ThemeProvider theme={mdTheme}>

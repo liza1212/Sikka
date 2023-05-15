@@ -215,7 +215,4 @@ contract Sikka{
         }
         return (groupList,groupNameList);
     }
-
-    
-
 }
