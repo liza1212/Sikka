@@ -74,7 +74,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const drawerWidth = 240;
 const mdTheme = createTheme();
 
-const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount})=>{
+const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
     const [menuItem,setMenuItem] = React.useState("Dashboard");
     const [open, setopen] = React.useState(true);
     const toggleDrawer=()=>{
@@ -201,10 +201,10 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount})=>{
         >
           <Toolbar />
         {menuItem === "Dashboard" && <Dashboard/>}  
-        {menuItem === "Groups" && <Groups/>}  
+        {menuItem === "Groups" && <Groups state={state} currentAccount={currentAccount}/> }
         {menuItem === "Friends" && <Friends/>}  
         {menuItem === "Reports" && <Reports/>}  
-        {menuItem === "Payments" && <Payments/>}
+        {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>}
 
         </Box>
     </Box>

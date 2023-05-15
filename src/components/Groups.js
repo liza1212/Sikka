@@ -28,9 +28,10 @@ const groupLists=[
         "Apple","Banana", "Mangoes", "Oranges", "WaterMelon", "Papaya"
     ]
 
-const Groups = ({}) => {
+const Groups = ({state,currentAccount}) => {
   const [groupNameValue, setgroupNameValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
+  
   const createGroup = () => setOpen(true);
   const modalClose = () => {
     setOpen(false)
@@ -54,6 +55,93 @@ const Groups = ({}) => {
     const addMembersToGroup=(groupN)=>{
         console.log("from the function: ",groupName);
         setopenInfo(true);
+    }
+
+    const addGroup= async(name)=>{
+      const {web3,contract} = state;
+      console.log(contract)
+      console.log(name)
+      try{
+          await contract.methods.createGroup(name).send({from:currentAccount})
+          .once('receipt',async(receipt)=>{
+          await(fetchMemberedGroup(currentAccount))
+      })
+      }catch(error){
+          if (error.message) {
+              console.log('Contract error:', error.message);
+            }
+      }
+    }
+
+    const fetchMemberedGroup = async(currentAccount)=>{
+      const {web3,contract} = state;
+      console.log(currentAccount)
+      try {
+          const [memberedGroupAddress,memberedGroupName]=await contract.methods.getMemberedGroups(currentAccount).call()
+          return memberedGroupAddress,memberedGroupName
+      } catch (error) {
+          console.log("Cannot fetch membered group info",error)
+      }
+      
+    }
+    
+    const addMember= async(groupAddress,memberAddress)=>{
+      const {contract} = state;
+      try{
+          await contract.methods.addMember(groupAddress,memberAddress).send({from:currentAccount})
+          .once('receipt',async(receipt)=>{
+          await(fetchGroupMember(groupAddress))
+      })
+      }catch(error){
+          if (error.message) {
+              console.log('Cannot add member', error.message);
+            }
+      }
+    }
+  
+    const fetchGroupMember = async(groupAddress)=>{
+          const {contract} = state
+          try {
+              const GroupMember = await contract.methods.getMemberes(currentAccount).call()
+              return GroupMember,GroupMember.length
+          } catch (error) {
+              console.log(`Cannot get group member of ${groupAddress}`,error)
+          }
+    }
+  
+    const addExpense= async(groupAddress,expenseName,expensePrice,contributorAddress)=>{
+          const {contract} = state;
+          try {
+              await contract.methods.addExpense(groupAddress,expenseName,expensePrice,contributorAddress).send({from:currentAccount})
+              .once('receipt',async(receipt)=>{
+              await(fetchExpenses(groupAddress))
+              })
+          }catch (error) {
+              console.log("Expense cannot be added",error)
+          }
+    }
+  
+    const fetchExpenses = async(groupAddress)=>{
+      const {contract} = state;
+      try{
+          const [gName,expenseCount] = await contract.methods.group(groupAddress).call();
+          const groupExpense = []
+          for(var i= 0 ;i<expenseCount;i++){
+              const [name,amount,contributor] = await contract.methods.getExpense(groupAddress,i).call();
+              groupExpense.push({eName:name,eAmount:amount,eContributor:contributor})
+          }
+      }catch(error){
+          console.log(error)
+      }
+    }
+  
+    const splitwise = async(groupAddress)=>{
+      const {contract} = state;
+      try {
+          await contract.methods.splitwise(groupAddress);
+      } catch (error) {
+          console.log("Can't calculate balance split",error)
+      }
     }
 
   return (
