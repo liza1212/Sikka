@@ -3,10 +3,12 @@ import './App.css';
 import Web3 from 'web3';
 import Sikka from './contracts/Sikka.json'
 import UserProfile from './pages/UserProfile';
+import { Button } from '@mui/material';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
   const [state, setState] = useState({web3:null,contract:null});
+  const [groupName, setGroupName] = React.useState('');
 
 
   async function loadWeb3(){
@@ -18,7 +20,7 @@ function App() {
         if (window.ethereum) {
             provider = window.ethereum
             // console.log("Modern dapp")
-            await window.ethereum.enable();
+            await window.ethereum.request({method:"eth_requestAccounts"})
         }
         // Legacy dapp Browser...
         else if (window.web3) {
@@ -40,14 +42,15 @@ function App() {
         const account = await web3.eth.getAccounts();
         // console.log("Account",account)
         setCurrentAccount(account[0]);
-
+        console.log(currentAccount)
 
         const networkId = await web3.eth.net.getId();
-        // console.log(web3)
+        console.log(web3)
+        // console.log(networkId)
         const deployedNetwork = Sikka.networks[networkId];
-        // console.log(deployedNetwork.address)
+        console.log(deployedNetwork.address)
         const contract = new web3.eth.Contract(Sikka.abi,deployedNetwork.address);
-        // console.log(contract)// new instance 
+        console.log(contract)// new instance 
         setState({web3:web3,contract:contract})
         
     }
@@ -69,18 +72,47 @@ function App() {
 
   
   useEffect(()=>{
-    loadWeb3()
+    // loadWeb3()
     window.ethereum.on('accountsChanged', handleAccountsChanged);
       
-  },[])
+  },[currentAccount])
+
+  const fetchMemberedGroup = async(currentAccount)=>{
+    const {web3,contract} = state;
+    console.log(currentAccount)
+    const [memberedGroupAddress,memberedGroupName]=await contract.methods.getMemberedGroups(currentAccount).call()
+    return memberedGroupAddress,memberedGroupName
+  }
+
+  const createGroup= async(name)=>{
+    const {web3,contract} = state;
+    console.log(contract)
+    console.log(name)
+    try{
+        await contract.methods.createGroup(name).send({from:currentAccount})
+        .once('receipt',async(receipt)=>{
+        await(fetchMemberedGroup(currentAccount))
+    })
+    }catch(error){
+        if (error.message) {
+            console.log('Contract error:', error.message);
+          }
+    }
+  }
 
 
 
-console.log(state)
   
   return (
     <div>
-        <UserProfile loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount}/>
+        {/* <UserProfile loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount}/> */}
+        <button onClick={loadWeb3}>Login</button>
+        <form>
+            <input value={groupName} onChange={(e) => setGroupName(e.target.value)} />
+
+            <button onClick={(e) => {e.preventDefault();createGroup(groupName);}}>Create group</button>
+        </form>
+        <button onClick={() => fetchMemberedGroup(currentAccount)}>get</button>
     </div>
   );
 }
