@@ -24,6 +24,7 @@ import Dashboard from './Dashboard';
 import Friends from './Friends';
 import Reports from './Reports';
 import Groups from './Groups';
+import Payments from './Payments';
 import GroupInfo from './GroupInfo';
 
 const AppBar = styled(MuiAppBar, {
@@ -203,6 +204,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount})=>{
         {menuItem === "Groups" && <Groups/>}  
         {menuItem === "Friends" && <Friends/>}  
         {menuItem === "Reports" && <Reports/>}  
+        {menuItem === "Payments" && <Payments/>}
 
         </Box>
     </Box>

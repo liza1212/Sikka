@@ -1,6 +1,5 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import GroupList from './GroupList'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography'
@@ -9,6 +8,16 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+
 
 const style = {
   position: 'absolute',
@@ -22,15 +31,23 @@ const style = {
   p: 4,
 };
 
-// const styleText={
-//   display:'flex',
-//   margin: 3,
-// }
+const styleText={
+  display:'flex',
+  margin: 3,
+}
 
 
 const GroupInfo = ({groupName}) => {
   const [open, setOpen] = React.useState(false);
-const [expanded, setExpanded] = React.useState(false);
+  const [expenseDescription, setexpenseDescription]= React.useState("");
+  const [expenseContributor, setexpenseContributor]= React.useState("");
+  const [expenseAmount, setexpenseAmount]= React.useState(0);
+
+  const formatData=[
+    {eName:"Breakfast",eAmount:20,eContributor:"Liza"},
+    {eName:"Lunch", eAmount:30, eContributor:"Bishesh"},
+    {eName:"Snacks", eAmount:40, eContributor:"Libu"}
+  ]
 
   const addExpense = () => setOpen(true);
   const modalClose = () => {
@@ -39,32 +56,34 @@ const [expanded, setExpanded] = React.useState(false);
 
   const submitGroup=()=>{
     setOpen(false);
+    console.log("Contributor ",expenseContributor);
+    console.log("Amount ",expenseAmount);
+    setexpenseAmount(0);
+    setexpenseContributor("");
+    setexpenseDescription("")
+    const newExpense={
+      eName:expenseDescription,
+      eAmount: expenseAmount,
+      eContributor: expenseContributor,
+    }
+    formatData.push(newExpense);
+    console.log(formatData)
   };
 
-  // const handleChange=(e)=>{
-  //   console.log(e.target.value);
-  // }
-  const expenseData=[
-    {"Apple":[
-      {"2023-01-03":["Breakfast", "Lunch"]}, 
-      {"2023-01-22":["Lunch", "Dinner"]},
-      {"2023-01-25":["Breakfast", "Snacks"]},
-      {"2023-01-26":["Dinner", "Dessert"]}]
-    },
-    {"Banana":[
-      {"2020-01-03":["Breakfast", "Lunch"]}, 
-      {"2020-01-22":["Lunch", "Dinner"]},
-      {"2020-01-25":["Breakfast", "Snacks"]},
-      {"2020-01-26":["Dinner", "Dessert"]}]
-    },
-  ]
+  const handleChangeDescription=(e)=>{
+    setexpenseDescription(e.target.value);
+  }
+const handleChangeContributor=(e)=>{
+    setexpenseContributor(e.target.value);
+  }
+  const handleChangeAmount=(e)=>{
+    setexpenseAmount(e.target.value);
+  }
 
 
 
-  const handleChangePanel = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
-  var date,expenses, gName;
+  
+
   return (
     <div>
       <Box 
@@ -80,51 +99,36 @@ const [expanded, setExpanded] = React.useState(false);
         }}
       >
         <h1>{groupName}</h1>
-        {expenseData.map((expense)=>(
-
-           gName=Object.keys(expense)[0],
-           groupExpenses=expense[gName], //[{"2023-01-03":["Breakfast", "Lunch"]},  {"2023-01-22":["Lunch", "Dinner"]},]
-            {groupExpenses.map((singleExpense)=>(
-              date=Object.keys(singleExpense)[0],
-              expenses=groupExpenses[date],
-
-
-<Accordion 
-  expanded={expanded === 'panel1'} 
-  onChange={handleChangePanel('panel1')}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1bh-content"
-          id="panel1bh-header"
-        >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>
-            {date}
-          </Typography>
-          {/* <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography> */}
-          {expenses.map((expense)=>(
-          <Typography sx={{color: 'text.secondary'}}>
-            {expense },
-            {/* {expenses} */}
-          </Typography> 
+<div>
+   <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Description</TableCell>
+            <TableCell align="right">Contributor Name</TableCell>
+            <TableCell align="right">Amount</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {formatData.map((expense) => (
+            <TableRow
+              key={expense.name}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {expense.eName}
+              </TableCell>
+              <TableCell align="right">{expense.eContributor}</TableCell>
+              <TableCell align="right">{expense.eAmount}</TableCell>
+            </TableRow>
           ))}
-        </AccordionSummary>
-        <AccordionDetails>
-          {expenses.map((expense)=>(
-          <Typography>
-            {expense}
-            {/* {expenses} */}
-          </Typography> 
-          ))}
-          
-        </AccordionDetails>
-      </Accordion>
+        </TableBody>
+      </Table>
+    </TableContainer>
 
 
-            ))}
-        ))}
-        
         <Button variant="outlined" onClick={addExpense}>Add expense</Button>
-
+</div>
         <Modal 
           open={open}
           onClose={modalClose}
@@ -139,15 +143,41 @@ const [expanded, setExpanded] = React.useState(false);
             People don't take trips, trips take people,
           </Typography>
           
-       
+          <TextField
+              sx={styleText}
+              required
+              value={expenseDescription}
+              onChange={handleChangeDescription}
+              id="standard-search"
+              label="Expense Descrition"
+            />
 
+            <TextField
+              sx={styleText}
+              required
+              value={expenseContributor}
+              onChange={handleChangeContributor}
+              id="standard-search"
+              label="Contributor"
+            />
+
+            <TextField
+              sx={styleText}
+              required
+              value={expenseAmount}
+              onChange={handleChangeAmount}
+              id="standard-search"
+              label="Amount"
+            />
+       
           <Button 
             variant="outlined" 
             onClick={submitGroup}
             style={{
               cursor:'pointer',
-              dispay:'felx',
-              alignItems:'right'
+              dispay:'flex',
+              alignItems:'right',
+              align: 'right'
             }}
           >
               Submit
