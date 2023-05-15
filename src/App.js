@@ -80,8 +80,13 @@ function App() {
   const fetchMemberedGroup = async(currentAccount)=>{
     const {web3,contract} = state;
     console.log(currentAccount)
-    const [memberedGroupAddress,memberedGroupName]=await contract.methods.getMemberedGroups(currentAccount).call()
-    return memberedGroupAddress,memberedGroupName
+    try {
+        const [memberedGroupAddress,memberedGroupName]=await contract.methods.getMemberedGroups(currentAccount).call()
+        return memberedGroupAddress,memberedGroupName
+    } catch (error) {
+        console.log("Cannot fetch membered group info",error)
+    }
+    
   }
 
   const createGroup= async(name)=>{
@@ -100,19 +105,90 @@ function App() {
     }
   }
 
+  const addMember= async(groupAddress,memberAddress)=>{
+    const {contract} = state;
+    try{
+        await contract.methods.addMember(groupAddress,memberAddress).send({from:currentAccount})
+        .once('receipt',async(receipt)=>{
+        await(fetchGroupMember(groupAddress))
+    })
+    }catch(error){
+        if (error.message) {
+            console.log('Cannot add member', error.message);
+          }
+    }
+  }
 
+  const fetchGroupMember = async(groupAddress)=>{
+        const {contract} = state
+        try {
+            const GroupMember = await contract.methods.getMemberes(currentAccount).call()
+            return GroupMember,GroupMember.length
+        } catch (error) {
+            console.log(`Cannot get group member of ${groupAddress}`,error)
+        }
+  }
+
+  const addExpense= async(groupAddress,expenseName,expensePrice,contributorAddress)=>{
+        const {contract} = state;
+        try {
+            await contract.methods.addExpense(groupAddress,expenseName,expensePrice,contributorAddress).send({from:currentAccount})
+            .once('receipt',async(receipt)=>{
+            await(fetchExpenses(groupAddress))
+            })
+        }catch (error) {
+            console.log("Expense cannot be added",error)
+        }
+  }
+
+  const fetchExpenses = async(groupAddress)=>{
+    const {contract} = state;
+    try{
+        const [gName,expenseCount] = await contract.methods.group(groupAddress).call();
+        const groupExpense = []
+        for(var i= 0 ;i<expenseCount;i++){
+            const [name,amount,contributor] = await contract.methods.getExpense(groupAddress,i).call();
+            groupExpense.push({eName:name,eAmount:amount,eContributor:contributor})
+        }
+    }catch(error){
+        console.log(error)
+    }
+  }
+
+  const splitwise = async(groupAddress)=>{
+    const {contract} = state;
+    try {
+        await contract.methods.splitwise(groupAddress);
+    } catch (error) {
+        console.log("Can calculate balance split",error)
+    }
+  }
+
+  const getToPay = async(groupAddress)=>{
+    const {contract} = state;
+    try {
+        const [member,memberCount] = fetchGroupMember(groupAddress)
+        const toPay = []
+        for(let i = 0;i<memberCount;i++){
+            const amount = await contract.methods.getToPay(currentAccount,member[i],groupAddress).call()
+            toPay.push({group:groupAddress,to:member[i],amount:amount})
+        }
+    } catch (error) {
+        console.log("Contract error",error)
+    }
+  }
 
   
   return (
     <div>
-        {/* <UserProfile loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount}/> */}
-        <button onClick={loadWeb3}>Login</button>
+        <UserProfile loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount} state={state}/>
+        {/* <button onClick={loadWeb3}>Login</button>
         <form>
             <input value={groupName} onChange={(e) => setGroupName(e.target.value)} />
 
             <button onClick={(e) => {e.preventDefault();createGroup(groupName);}}>Create group</button>
         </form>
-        <button onClick={() => fetchMemberedGroup(currentAccount)}>get</button>
+        <button onClick={() => fetchMemberedGroup(currentAccount)}>get</button> */}
     </div>
   );
 }

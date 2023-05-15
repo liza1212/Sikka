@@ -64,7 +64,7 @@ const [expanded, setExpanded] = React.useState(false);
   const handleChangePanel = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
-  var date,expenses, gName;
+  var date,expenses, gName,groupExpenses;
   return (
     <div>
       <Box 
@@ -84,43 +84,44 @@ const [expanded, setExpanded] = React.useState(false);
 
            gName=Object.keys(expense)[0],
            groupExpenses=expense[gName], //[{"2023-01-03":["Breakfast", "Lunch"]},  {"2023-01-22":["Lunch", "Dinner"]},]
-            {groupExpenses.map((singleExpense)=>(
-              date=Object.keys(singleExpense)[0],
-              expenses=groupExpenses[date],
+           console.log("Group Expenses",groupExpenses)
+//             groupExpenses.map((singleExpense)=>(
+//               date=Object.keys(singleExpense)[0],
+//               expenses=groupExpenses[date],
 
 
-<Accordion 
-  expanded={expanded === 'panel1'} 
-  onChange={handleChangePanel('panel1')}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1bh-content"
-          id="panel1bh-header"
-        >
-          <Typography sx={{ width: '33%', flexShrink: 0 }}>
-            {date}
-          </Typography>
-          {/* <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography> */}
-          {expenses.map((expense)=>(
-          <Typography sx={{color: 'text.secondary'}}>
-            {expense },
-            {/* {expenses} */}
-          </Typography> 
-          ))}
-        </AccordionSummary>
-        <AccordionDetails>
-          {expenses.map((expense)=>(
-          <Typography>
-            {expense}
-            {/* {expenses} */}
-          </Typography> 
-          ))}
+// <Accordion 
+//   expanded={expanded === 'panel1'} 
+//   onChange={handleChangePanel('panel1')}>
+//         <AccordionSummary
+//           expandIcon={<ExpandMoreIcon />}
+//           aria-controls="panel1bh-content"
+//           id="panel1bh-header"
+//         >
+//           <Typography sx={{ width: '33%', flexShrink: 0 }}>
+//             {date}
+//           </Typography>
+//           {/* <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography> */}
+//           {expenses.map((expense)=>(
+//           <Typography sx={{color: 'text.secondary'}}>
+//             {expense },
+//             {/* {expenses} */}
+//           </Typography> 
+//           ))}
+//         </AccordionSummary>
+//         <AccordionDetails>
+//           {expenses.map((expense)=>(
+//           <Typography>
+//             {expense}
+//             {/* {expenses} */}
+//           </Typography> 
+//           ))}
           
-        </AccordionDetails>
-      </Accordion>
+//         </AccordionDetails>
+//       </Accordion>
 
 
-            ))}
+//             ))
         ))}
         
         <Button variant="outlined" onClick={addExpense}>Add expense</Button>
