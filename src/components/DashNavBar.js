@@ -201,7 +201,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
         >
           <Toolbar />
         {menuItem === "Dashboard" && <Dashboard/>}  
-        {menuItem === "Groups" && <Groups state={state} currentAccount={currentAccount}/> }
+        {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
         {menuItem === "Friends" && <Friends/>}  
         {menuItem === "Reports" && <Reports/>}  
         {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>}

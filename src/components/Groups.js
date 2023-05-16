@@ -24,23 +24,29 @@ const styleText={
   display:'flex',
   margin: 3,
 }
-const groupLists=[
-        "Apple","Banana", "Mangoes", "Oranges", "WaterMelon", "Papaya"
-    ]
 
-const Groups = ({state,currentAccount}) => {
+const Groups = ({loadWeb3,state,currentAccount}) => {
+  const [groupLists, setgroupLists]=React.useState([]);
   const [groupNameValue, setgroupNameValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
+  
+
+  React.useEffect(()=>{
+
+    // loadWeb3();
+    fetchMemberedGroup(currentAccount);
+  },[currentAccount])
   
   const createGroup = () => setOpen(true);
   const modalClose = () => {
     setOpen(false)
   };
 
-  const submitGroup=()=>{
+  const submitGroup=(e)=>{
+    e.preventDefault();
     setOpen(false);
-    groupLists.push(groupNameValue)
     setgroupNameValue("")
+    addGroup(groupNameValue);
   };
 
   const handleChange=(e)=>{
@@ -49,13 +55,15 @@ const Groups = ({state,currentAccount}) => {
   }
 
 
-  //from here
   const [groupName, setgroupName] = React.useState("")
-    const [openInfo, setopenInfo] = React.useState(false)
-    const addMembersToGroup=(groupN)=>{
-        console.log("from the function: ",groupName);
-        setopenInfo(true);
-    }
+  const [openInfo, setopenInfo] = React.useState(false)
+
+//for the opening of  the next page i.e. groupInfo page
+
+    // const addMembersToGroup=(groupN)=>{
+    //     console.log("from the function: ",groupName);
+    //     setopenInfo(true);
+    // }
 
     const addGroup= async(name)=>{
       const {web3,contract} = state;
@@ -76,9 +84,14 @@ const Groups = ({state,currentAccount}) => {
     const fetchMemberedGroup = async(currentAccount)=>{
       const {web3,contract} = state;
       console.log(currentAccount)
+
       try {
-          const [memberedGroupAddress,memberedGroupName]=await contract.methods.getMemberedGroups(currentAccount).call()
-          return memberedGroupAddress,memberedGroupName
+          const result=await contract.methods.getMemberedGroups(currentAccount).call();
+          const memberedGroupAddress= result[0];
+          const memberedGroupName = result[1];
+          console.log(memberedGroupAddress, memberedGroupName);
+          setgroupLists(memberedGroupName);
+          // return memberedGroupAddress,memberedGroupName
       } catch (error) {
           console.log("Cannot fetch membered group info",error)
       }
@@ -109,31 +122,7 @@ const Groups = ({state,currentAccount}) => {
           }
     }
   
-    const addExpense= async(groupAddress,expenseName,expensePrice,contributorAddress)=>{
-          const {contract} = state;
-          try {
-              await contract.methods.addExpense(groupAddress,expenseName,expensePrice,contributorAddress).send({from:currentAccount})
-              .once('receipt',async(receipt)=>{
-              await(fetchExpenses(groupAddress))
-              })
-          }catch (error) {
-              console.log("Expense cannot be added",error)
-          }
-    }
-  
-    const fetchExpenses = async(groupAddress)=>{
-      const {contract} = state;
-      try{
-          const [gName,expenseCount] = await contract.methods.group(groupAddress).call();
-          const groupExpense = []
-          for(var i= 0 ;i<expenseCount;i++){
-              const [name,amount,contributor] = await contract.methods.getExpense(groupAddress,i).call();
-              groupExpense.push({eName:name,eAmount:amount,eContributor:contributor})
-          }
-      }catch(error){
-          console.log(error)
-      }
-    }
+
   
     const splitwise = async(groupAddress)=>{
       const {contract} = state;
@@ -171,7 +160,7 @@ const Groups = ({state,currentAccount}) => {
         <Button variant="outlined" onClick={createGroup}>Create a group</Button>
 
         </List>
-        <GroupInfo groupName={groupName}></GroupInfo>
+        <GroupInfo groupName={groupName} state={state} currentAccount={currentAccount} openInfo={openInfo}></GroupInfo>
 
         <Modal 
           open={open}

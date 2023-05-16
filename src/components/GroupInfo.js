@@ -37,7 +37,7 @@ const styleText={
 }
 
 
-const GroupInfo = ({groupName}) => {
+const GroupInfo = ({groupName, state, currentAccount,openInfo}) => {
   const [open, setOpen] = React.useState(false);
   const [expenseDescription, setexpenseDescription]= React.useState("");
   const [expenseContributor, setexpenseContributor]= React.useState("");
@@ -49,7 +49,8 @@ const GroupInfo = ({groupName}) => {
     {eName:"Snacks", eAmount:40, eContributor:"Libu"}
   ]
 
-  const addExpense = () => setOpen(true);
+  const addExpenseOpen = () => setOpen(true);
+
   const modalClose = () => {
     setOpen(false)
   };
@@ -73,19 +74,45 @@ const GroupInfo = ({groupName}) => {
   const handleChangeDescription=(e)=>{
     setexpenseDescription(e.target.value);
   }
-const handleChangeContributor=(e)=>{
+
+  const handleChangeContributor=(e)=>{
     setexpenseContributor(e.target.value);
   }
+
   const handleChangeAmount=(e)=>{
     setexpenseAmount(e.target.value);
   }
+    const fetchExpenses = async(groupAddress)=>{
+      const {contract} = state;
+      try{
+          const result = await contract.methods.group(groupAddress).call();
+          const gName=result[0];
+          const expenseCount=result[1];
+          const groupExpense = [];
+          for(var i= 0 ;i<expenseCount;i++){
+              const [name,amount,contributor] = await contract.methods.getExpense(groupAddress,i).call();
+              groupExpense.push({eName:name,eAmount:amount,eContributor:contributor})
+          }
+      }catch(error){
+          console.log(error)
+      }
+    }
+    
+  const addExpense= async(groupAddress,expenseName,expensePrice,contributorAddress)=>{
+          const {contract} = state;
+          try {
+              await contract.methods.addExpense(groupAddress,expenseName,expensePrice,contributorAddress).send({from:currentAccount})
+              .once('receipt',async(receipt)=>{
+              await(fetchExpenses(groupAddress))
+              })
+          }catch (error) {
+              console.log("Expense cannot be added",error)
+          }
+    }
 
-
-
-  
 
   return (
-    <div>
+    <div sx={{display: openInfo? 'block': 'none'}}>
       <Box 
         component="main"
         sx={{
@@ -99,8 +126,8 @@ const handleChangeContributor=(e)=>{
         }}
       >
         <h1>{groupName}</h1>
-<div>
-   <TableContainer component={Paper}>
+
+   <TableContainer component={Paper} sx={{ display:openInfo?'block':'none',}}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -127,8 +154,8 @@ const handleChangeContributor=(e)=>{
     </TableContainer>
 
 
-        <Button variant="outlined" onClick={addExpense}>Add expense</Button>
-</div>
+        <Button variant="outlined" onClick={addExpenseOpen} sx={{display:openInfo?'block':'none'}}>Add expense</Button>
+
         <Modal 
           open={open}
           onClose={modalClose}

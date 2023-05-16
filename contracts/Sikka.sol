@@ -215,4 +215,10 @@ contract Sikka{
         }
         return (groupList,groupNameList);
     }
+    function getExpense(address _groupOwner, uint256 _expenseIndex) public view returns (string memory, uint256, address) {
+        Group storage group = groups[_groupOwner];
+        Expense storage expense = group.expenses[_expenseIndex];
+
+        return (expense.description, expense.amount, expense.contributor);
+    }
 }
