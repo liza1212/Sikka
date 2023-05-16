@@ -19,6 +19,7 @@ contract Sikka{
         uint256 expenseCount;
         mapping (address => uint256) contributors;
         address[] nonpaid;
+        int256[][] expense2dArray;
         mapping(address=>mapping(address=>uint256))  topay;
     }
     
@@ -29,9 +30,8 @@ contract Sikka{
         Group storage group = groups[msg.sender];
         require(!isGroupExist(msg.sender), "Group already exists");
         group.name = _groupName;
-        group.members.push(msg.sender);
-        group.isMember[msg.sender] = true;
         groupOwners.push(msg.sender); // Add the group owner to the groupOwners array
+        addMembers(msg.sender,msg.sender);
     }
 
     function addExpense(
@@ -53,6 +53,8 @@ contract Sikka{
         // expense.isPaid = false;
         // Increment expense count
         group.expenseCount++;
+        group.contributors[expense.contributor]+= expense.amount;
+ 
     }
 
     function addMembers(address _groupOwner,address  _member)
@@ -63,6 +65,8 @@ contract Sikka{
         group.members.push(_member);
         group.isMember[_member] = true;
     }
+
+
 
     function getMembers(address _groupOwner) public view returns (address[] memory){
         Group storage group= groups[_groupOwner];
@@ -99,102 +103,110 @@ contract Sikka{
         return (group.name, groupOwner,group.members, descriptions, amounts);
     }
 
-    function getContributors(address _groupOwner) public view returns(address[] memory ){
+
+    function getContributors(address _groupOwner) public view returns (address[] memory) {
         Group storage group = groups[_groupOwner];
-        address [] memory contributorList=new address[](group.expenseCount);
-        uint index = 0;
-        for(uint i = 0;i<group.expenseCount;i++ ){
+        address[] memory contributorList = new address[](group.expenseCount);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < group.expenseCount; i++) {
             Expense storage expense = group.expenses[i];
-            contributorList[index]=expense.contributor;
-            index ++;
-        }  
-        return contributorList;
-    }
+            bool isDuplicate = false;
 
-
-   //calculate average
-   function calculateAvg(address _groupOwner) public view returns(uint256){
-       require(isGroupExist(_groupOwner), "Group does not exist");
-       Group storage group = groups[_groupOwner];
-       uint256 sum = 0;
-       for(uint256 i = 0; i<group.expenseCount;i++){
-           sum += group.expenses[i].amount; 
-       }
-       return (sum/group.members.length);
-   }
-
-    //initialize topay as {A:{A:9}
-   function initializeTopay(address _groupOwner) internal {
-       Group storage group = groups[_groupOwner];
-        for (uint256 i=0; i<group.members.length; i++) {
-            for (uint256 j=0; j<group.members.length; j++) {
-                group.topay[group.members[i]][group.members[j]] = 0;
-            }
-        }
-    }
-
-   function markContributor(address _groupOwner) internal {
-        uint256 avg = calculateAvg(_groupOwner);
-        Group storage group = groups[_groupOwner];
-        initializeTopay(_groupOwner);
-        for (uint256 i=0; i<group.expenseCount; i++) {
-            Expense storage expense = group.expenses[i];
-            require(group.isMember[expense.contributor], "Not a member of the group");
-            
-                group.contributors[expense.contributor] = expense.amount;
-                for (uint256 j=0; j<group.members.length; j++) {
-                        if (group.members[j] == expense.contributor) {
-                            group.topay[expense.contributor][expense.contributor] = expense.amount;
-                        }
-                }
-            
-        }
-        for (uint256 i=0; i<group.members.length; i++) {
-            if (!group.isMember[group.members[i]] || group.contributors[group.members[i]] < avg) {
-                group.nonpaid.push(group.members[i]);
-            }
-        }
-    
-    }
-
-    function splitwise(address _groupOwner) public {
-        uint256 avg = calculateAvg(_groupOwner);
-        markContributor( _groupOwner);
-        Group storage group = groups[_groupOwner];
-        while(group.nonpaid.length > 0) {
-            for(uint256 i = 0; i < group.members.length; i++) {
-                address member = group.members[i];
-                if(group.topay[member][member] > avg) {
-                    address j = group.nonpaid[0];
-                    if(group.topay[member][member] - avg > avg) {
-                        uint256 pay = avg - group.topay[j][j];
-                        group.topay[member][member] -= pay;
-                        group.topay[j][member] = pay;
-                        group.topay[j][j] += pay;
-                    }
-                    else {
-                        uint256 amt = group.topay[member][member] - avg;
-                        group.topay[j][member] = amt;
-                        group.topay[j][j] += amt;
-                        group.topay[member][member] -= amt;
-                    }
-                    if(group.topay[j][j] == avg) {
-                        for(uint256 k = 0; k < group.nonpaid.length; k++) {
-                            if(group.nonpaid[k] == j) {
-                                group.nonpaid[k] = group.nonpaid[group.nonpaid.length-1];
-                                group.nonpaid.pop();
-                            }
-                        }
-                    }
+            // Check if the current contributor already exists in the list
+            for (uint256 j = 0; j < index; j++) {
+                if (contributorList[j] == expense.contributor) {
+                    isDuplicate = true;
+                    break;
                 }
             }
+
+            // If the contributor is not a duplicate, add it to the list
+            if (!isDuplicate) {
+                contributorList[index] = expense.contributor;
+                index++;
+            }
         }
+
+        // Trim the contributorList array to remove any unused slots
+        address[] memory trimmedContributors = new address[](index);
+        for (uint256 i = 0; i < index; i++) {
+            trimmedContributors[i] = contributorList[i];
+        }
+
+        return trimmedContributors;
     }
 
-    function getTopay(address from, address to, address _groupOwner) public view returns(uint256) {
+
+    function getContributorAmount(address _groupOwner,address _contributor) public view returns (uint){
         Group storage group = groups[_groupOwner];
-        return group.topay[from][to];
+        return (group.contributors[_contributor]);
     }
+
+    function getExpense(address _groupOwner, uint256 _expenseIndex) public view returns (string memory, uint256, address) {
+        Group storage group = groups[_groupOwner];
+        Expense storage expense = group.expenses[_expenseIndex];
+
+        return (expense.description, expense.amount, expense.contributor);
+    }
+
+
+    function initializeExpense(address _groupOwner) internal {
+        Group storage group = groups[_groupOwner];
+        int256[][] memory expense2dArrayCopy = new int256[][](group.members.length);
+        
+        for (uint256 i = 0; i < group.members.length; i++) {
+            expense2dArrayCopy[i] = new int256[](group.members.length);
+            
+            for (uint256 j = 0; j < group.members.length; j++) {
+                expense2dArrayCopy[i][j] = 0;
+            }
+        }
+        group.expense2dArray = expense2dArrayCopy;
+    }
+        
+    function findMemberIndex(address[] memory members, address member) private pure returns (uint256) {
+        for (uint256 i = 0; i < members.length; i++) {
+            if (members[i] == member) {
+                return i;
+            }
+        }
+        revert("Member not found in group");
+    }
+
+    function splitwise(address _groupOwner) public{
+        Group storage group = groups[_groupOwner];
+        initializeExpense(_groupOwner);
+        int256[][] memory expense2dArrayCopy = group.expense2dArray;
+        for(uint i = 0; i < group.expenseCount;i++){
+            Expense memory expense = group.expenses[i];
+            uint256 payerIndex = findMemberIndex(group.members,expense.contributor);
+            int256 splitExpense = int(expense.amount/group.members.length);
+            for(uint j = 0; j< group.members.length;j++){
+                if (j == payerIndex) {
+                    expense2dArrayCopy[payerIndex][j] = 0;
+                } else {
+                    expense2dArrayCopy[payerIndex][j] += splitExpense;
+                }   
+            }
+        }
+            group.expense2dArray = expense2dArrayCopy;
+    }
+
+    function getTopay(address from, address to, address _groupOwner) public view returns(int256) {
+        Group storage group = groups[_groupOwner];
+        uint indexOfFrom = findMemberIndex(group.members,from);
+        uint indexOfTo = findMemberIndex(group.members,to);
+        int settlementAmount = group.expense2dArray[indexOfTo][indexOfFrom] - group.expense2dArray[indexOfFrom][indexOfTo];
+        if (settlementAmount > 0){
+            return settlementAmount;
+        }
+        else{
+            return 0;
+        }
+        
+    }
+
 
     function getMemberedGroups(address _ownerAddress) public view returns (address[] memory, string[] memory){
         uint256 groupCount = getGroupCount();
@@ -213,12 +225,53 @@ contract Sikka{
             }
             groupCount--;
         }
-        return (groupList,groupNameList);
-    }
-    function getExpense(address _groupOwner, uint256 _expenseIndex) public view returns (string memory, uint256, address) {
-        Group storage group = groups[_groupOwner];
-        Expense storage expense = group.expenses[_expenseIndex];
+        // Trim the contributorList array to remove any unused slots
+        address[] memory trimmedgroupList = new address[](index);
+        string[] memory trimmedgroupNameList = new string[](index);
+        for (uint256 i = 0; i < index; i++) {
+            trimmedgroupList[i]=groupList[i];
+            trimmedgroupNameList[i]=groupNameList[i];
+        }
 
-        return (expense.description, expense.amount, expense.contributor);
+        return (trimmedgroupList,trimmedgroupNameList);
     }
+
+    function transfer( address _recieverAddress,address _groupAddress) public payable {
+        Group storage group= groups[_groupAddress];
+        address payable sender= payable(msg.sender);
+        int256 amount= getTopay( sender, _recieverAddress, _groupAddress)/10000000000000000000;
+        // amount=msg.value;
+        // amount= 1000000000000000;
+        address payable reciever = payable(_recieverAddress);
+        bool senderExists= false;
+        bool recieverExists= false;
+
+        // To check if the sender or reciever exists or not:
+        for (uint i=0;i<group.members.length;i++)
+        {
+            if(sender == group.members[i]){
+                senderExists=true;
+                break;
+            }
+        }
+        for (uint i=0;i<group.members.length;i++)
+        {
+            if(reciever== group.members[i]){
+                recieverExists=true;
+                break;
+            }
+        }
+        require(senderExists,"Sender does not exists");
+        require(recieverExists,"Reciever does not exist.");
+        require(sender!=reciever,"Sender and reciever cannot be same.");
+        require(address(this).balance >= uint256(amount), "Insufficient balance");
+        // require(amount>0 , "No amount to be transferred.");
+        
+        uint indexOfSender = findMemberIndex(group.members,sender);
+        uint indexOfReceiver = findMemberIndex(group.members,_recieverAddress);
+        reciever.transfer(uint256(amount));
+        group.expense2dArray[indexOfSender][indexOfReceiver] -= amount;
+        
+    }
+
 }
