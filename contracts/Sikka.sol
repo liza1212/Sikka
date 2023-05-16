@@ -239,7 +239,7 @@ contract Sikka{
     function transfer( address _recieverAddress,address _groupAddress) public payable {
         Group storage group= groups[_groupAddress];
         address payable sender= payable(msg.sender);
-        int256 amount= getTopay( sender, _recieverAddress, _groupAddress)/10000000000000000000;
+        int256 amount= getTopay( sender, _recieverAddress, _groupAddress);
         // amount=msg.value;
         // amount= 1000000000000000;
         address payable reciever = payable(_recieverAddress);
@@ -261,6 +261,7 @@ contract Sikka{
                 break;
             }
         }
+        require(msg.value == uint256(amount),"Amount mismatch, give exact amount");
         require(senderExists,"Sender does not exists");
         require(recieverExists,"Reciever does not exist.");
         require(sender!=reciever,"Sender and reciever cannot be same.");
