@@ -54,21 +54,15 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
     setgroupNameValue(e.target.value);
   }
 
-
+  const [groupAddress, setgroupAddress]= React.useState("")
   const [groupName, setgroupName] = React.useState("")
   const [openInfo, setopenInfo] = React.useState(false)
-
-//for the opening of  the next page i.e. groupInfo page
-
-    // const addMembersToGroup=(groupN)=>{
-    //     console.log("from the function: ",groupName);
-    //     setopenInfo(true);
-    // }
 
     const addGroup= async(name)=>{
       const {web3,contract} = state;
       console.log(contract)
       console.log(name)
+
       try{
           await contract.methods.createGroup(name).send({from:currentAccount})
           .once('receipt',async(receipt)=>{
@@ -90,6 +84,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           const memberedGroupAddress= result[0];
           const memberedGroupName = result[1];
           console.log(memberedGroupAddress, memberedGroupName);
+          setgroupAddress(memberedGroupAddress);
           setgroupLists(memberedGroupName);
           // return memberedGroupAddress,memberedGroupName
       } catch (error) {
@@ -160,7 +155,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
         <Button variant="outlined" onClick={createGroup}>Create a group</Button>
 
         </List>
-        <GroupInfo groupName={groupName} state={state} currentAccount={currentAccount} openInfo={openInfo}></GroupInfo>
+        <GroupInfo groupName={groupName} state={state} currentAccount={currentAccount} openInfo={openInfo} groupAddress={groupAddress}></GroupInfo>
 
         <Modal 
           open={open}

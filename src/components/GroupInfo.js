@@ -37,17 +37,23 @@ const styleText={
 }
 
 
-const GroupInfo = ({groupName, state, currentAccount,openInfo}) => {
+const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
   const [open, setOpen] = React.useState(false);
   const [expenseDescription, setexpenseDescription]= React.useState("");
   const [expenseContributor, setexpenseContributor]= React.useState("");
   const [expenseAmount, setexpenseAmount]= React.useState(0);
+  const [groupExpense, setgroupExpense]= React.useState([]);
+  const [groupMembersList, setgroupMembersList]= React.useState([]);
 
-  const formatData=[
-    {eName:"Breakfast",eAmount:20,eContributor:"Liza"},
-    {eName:"Lunch", eAmount:30, eContributor:"Bishesh"},
-    {eName:"Snacks", eAmount:40, eContributor:"Libu"}
-  ]
+  // const formatData=[
+  //   {eName:"Breakfast",eAmount:20,eContributor:"Liza"},
+  //   {eName:"Lunch", eAmount:30, eContributor:"Bishesh"},
+  //   {eName:"Snacks", eAmount:40, eContributor:"Libu"}
+  // ]
+
+  React.useEffect(()=>{
+    fetchExpenses(currentAccount);
+  })
 
   const addExpenseOpen = () => setOpen(true);
 
@@ -62,13 +68,14 @@ const GroupInfo = ({groupName, state, currentAccount,openInfo}) => {
     setexpenseAmount(0);
     setexpenseContributor("");
     setexpenseDescription("")
-    const newExpense={
-      eName:expenseDescription,
-      eAmount: expenseAmount,
-      eContributor: expenseContributor,
-    }
-    formatData.push(newExpense);
-    console.log(formatData)
+    // const newExpense={
+    //   eName:expenseDescription,
+    //   eAmount: expenseAmount,
+    //   eContributor: expenseContributor,
+    // }
+    addExpense(currentAccount, expenseDescription, expenseAmount, expenseContributor);
+    // formatData.push(newExpense);
+    console.log("Group Expense after new expense has been added: ", groupExpense)
   };
 
   const handleChangeDescription=(e)=>{
@@ -82,34 +89,58 @@ const GroupInfo = ({groupName, state, currentAccount,openInfo}) => {
   const handleChangeAmount=(e)=>{
     setexpenseAmount(e.target.value);
   }
-    const fetchExpenses = async(groupAddress)=>{
-      const {contract} = state;
-      try{
-          const result = await contract.methods.group(groupAddress).call();
-          const gName=result[0];
-          const expenseCount=result[1];
-          const groupExpense = [];
-          for(var i= 0 ;i<expenseCount;i++){
-              const [name,amount,contributor] = await contract.methods.getExpense(groupAddress,i).call();
-              groupExpense.push({eName:name,eAmount:amount,eContributor:contributor})
-          }
-      }catch(error){
-          console.log(error)
-      }
+  
+  // var groupExpense = [];
+
+  const fetchExpenses = async(groupAddress)=>{
+    const {contract} = state;
+    try{
+        const result = await contract.methods.group(groupAddress).call();
+        const gName=result[0];
+        const expenseCount=result[1];
+        var temporary=[];
+        var name, amount, contributor;
+        for(var i= 0 ;i<expenseCount;i++){
+            const result = await contract.methods.getExpense(groupAddress,i).call();
+            name=result[0];
+            amount=result[1];
+            contributor=result[2];
+            // setgroupExpense()
+            temporary.push({eName:name,eAmount:amount,eContributor:contributor})
+        }
+        setgroupExpense(temporary);
+    }catch(error){
+        console.log(error)
     }
+  }
     
   const addExpense= async(groupAddress,expenseName,expensePrice,contributorAddress)=>{
-          const {contract} = state;
-          try {
-              await contract.methods.addExpense(groupAddress,expenseName,expensePrice,contributorAddress).send({from:currentAccount})
-              .once('receipt',async(receipt)=>{
-              await(fetchExpenses(groupAddress))
-              })
-          }catch (error) {
-              console.log("Expense cannot be added",error)
-          }
+    const {contract} = state;
+    try {
+        await contract.methods.addExpense(groupAddress,expenseName,expensePrice,contributorAddress).send({from:currentAccount})
+        .once('receipt',async(receipt)=>{
+        await(fetchExpenses(groupAddress))
+        })
+    }catch (error) {
+        console.log("Expense cannot be added",error)
     }
+  }
 
+  const fetchGroupMember = async(groupAddress)=>{
+    const {contract} = state
+    try {
+        const GroupMember = await contract.methods.getMemberes(currentAccount).call()
+        setgroupMembersList(GroupMember)
+        // return GroupMember,GroupMember.length
+    } catch (error) {
+        console.log(`Cannot get group member of ${groupAddress}`,error)
+    }
+  }
+
+
+  React.useEffect(()=>{
+    fetchGroupMember(groupAddress)
+  })
 
   return (
     <div sx={{display: openInfo? 'block': 'none'}}>
@@ -137,7 +168,7 @@ const GroupInfo = ({groupName, state, currentAccount,openInfo}) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {formatData.map((expense) => (
+          {groupExpense?groupExpense.map((expense) => (
             <TableRow
               key={expense.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -148,7 +179,7 @@ const GroupInfo = ({groupName, state, currentAccount,openInfo}) => {
               <TableCell align="right">{expense.eContributor}</TableCell>
               <TableCell align="right">{expense.eAmount}</TableCell>
             </TableRow>
-          ))}
+          )):<></>}
         </TableBody>
       </Table>
     </TableContainer>
