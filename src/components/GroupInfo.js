@@ -95,20 +95,22 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
   const fetchExpenses = async(groupAddress)=>{
     const {contract} = state;
     try{
-        const result = await contract.methods.group(groupAddress).call();
-        const gName=result[0];
-        const expenseCount=result[1];
-        var temporary=[];
-        var name, amount, contributor;
-        for(var i= 0 ;i<expenseCount;i++){
-            const result = await contract.methods.getExpense(groupAddress,i).call();
-            name=result[0];
-            amount=result[1];
-            contributor=result[2];
-            // setgroupExpense()
-            temporary.push({eName:name,eAmount:amount,eContributor:contributor})
+      // console.log(await contract.methods.groups(groupAddress).call())
+      const result = await contract.methods.groups(groupAddress).call();
+      const gName=result[0];
+      const expenseCount=result[1];
+      var temporary=[];
+      var name, amount, contributor;
+      for(var i= 0 ;i<expenseCount;i++){
+          const result = await contract.methods.getExpense(groupAddress,i).call();
+          name=result[0];
+          amount=result[1];
+          contributor=result[2];
+          // setgroupExpense()
+          temporary.push({eName:name,eAmount:amount,eContributor:contributor})
         }
-        setgroupExpense(temporary);
+        // console.log(temporary)
+      setgroupExpense(temporary);
     }catch(error){
         console.log(error)
     }
@@ -129,12 +131,13 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
   const fetchGroupMember = async(groupAddress)=>{
     const {contract} = state
     try {
-        const GroupMember = await contract.methods.getMemberes(currentAccount).call()
+        const GroupMember = await contract.methods.getMembers(currentAccount).call()
         setgroupMembersList(GroupMember)
         // return GroupMember,GroupMember.length
     } catch (error) {
         console.log(`Cannot get group member of ${groupAddress}`,error)
     }
+  
   }
 
 
