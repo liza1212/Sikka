@@ -38,7 +38,6 @@ const styleText={
   margin: 3,
 }
 
-const drawerWidth = 240;
 
 const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
   const [groupExpense, setgroupExpense]= React.useState([]);
@@ -179,120 +178,60 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
   },[])
 
   return (
-    <div>
-      <Box 
-        component="main"
-        sx={{
-          backgroudColor:(theme)=>
-          theme.palette.mode === 'light'
-          ? theme.palette.grey[100]
-          : theme.palette.grey[900],
-          flexGrow: 1,
-          overflow: 'auto',
-          display:openInfo?'block':'none',
-        }}
-      >
-        <h1>{groupName}</h1>
+    <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
+      <Box sx={{ display: 'flex',padding:2, justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h3">{groupName}</Typography>
+        <Button variant="contained"><h3>Add expense</h3></Button> 
+      </Box>
+      <Box sx={{ display: 'flex' }}>
+        <Box sx={{ flexGrow: 1, padding: 2 }}>
+          <TableContainer component={Paper}>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Description</TableCell>
+                  <TableCell align="right">Contributor Name</TableCell>
+                  <TableCell align="right">Amount</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {groupExpense.map((expense, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {expense.eName}
+                    </TableCell>
+                    <TableCell align="right">{expense.eContributor}</TableCell>
+                    <TableCell align="right">{expense.eAmount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
 
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-          },
-        }}
-        variant="permanent"
-        anchor="right"
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }} >
-        <Typography variant="h5" align='center' padding={3}>Members</Typography>
-          <Divider />
+        <Box component={Paper} sx={{ width: '20%',display: 'flex', flexDirection: 'column', justifyContent: 'center',paddingTop:0 }}>
+          <Typography variant="h5" align="center" paddingBottom={3}>
+            Members
+          </Typography>
+          <Divider/>
           <List>
-            {groupMembersList.map((member,index) => (
+            {groupMembersList.map((member, index) => (
               <ListItem key={index}>
-                  <ListItemIcon><AccountBoxIcon/></ListItemIcon>
-                  <ListItemText primary={`${member.slice(0, 5)}${'.'.repeat(3)}${member.slice(-4)}`} />
+                <ListItemIcon>
+                  <AccountBoxIcon />
+                </ListItemIcon>
+                <ListItemText primary={`${member.slice(0, 5)}${'.'.repeat(3)}${member.slice(-4)}`} />
               </ListItem>
             ))}
           </List>
-          <Button variant="outlined" justify="center" onClick={addMemberOpen} >Add member</Button>
-
-          {/* //Model for Add Member */}
-      <Modal 
-          open={openMemInfo}
-          onClose={memModalClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-      >
-        <Box 
-          sx={style} 
-          component="form" 
-          autocomplete="off">
-          <Typography id="modal-modal-title" variant="h6" component="h2" alignContent= "center">
-            The more, the merrier.
-          </Typography>
-          
-           <TextField
-              sx={styleText}
-              required
-              value={newMember}
-              onChange={handleChangeNewMember}
-              id="standard-search"
-              label="User Account"
-            />
-          
-          <Button 
-            variant="outlined" 
-            onClick={submitMember(newMember)}
-            style={{
-              cursor:'pointer',
-              dispay:'flex',
-              alignItems:'right',
-              align: 'right'
-            }}
-          >
-              Submit
+          <Button variant="outlined" style={{ alignSelf: 'center' }}>
+            Add member
           </Button>
-        </Box> 
-      </Modal>
-
-
-
         </Box>
-      </Drawer>
-
-   <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Description</TableCell>
-            <TableCell align="right">Contributor Name</TableCell>
-            <TableCell align="right">Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {groupExpense?groupExpense.map((expense) => (
-            <TableRow
-              key={expense.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {expense.eName}
-              </TableCell>
-              <TableCell align="right">{expense.eContributor}</TableCell>
-              <TableCell align="right">{expense.eAmount}</TableCell>
-            </TableRow>
-          )):<></>}
-        </TableBody>
-      </Table>
-    </TableContainer>
-
-
-        <Button variant="outlined" onClick={addExpenseOpen} sx={{display:openInfo?'block':'none'}}>Add expense</Button>
-
+      </Box>
       {/* //Model for Add Expense */}
       <Modal 
           open={open}
@@ -349,9 +288,8 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
           </Button>
         </Box> 
       </Modal>
-      </Box>
-    </div>
-  )
+    </Box>
+  );
 }
 
 export default GroupInfo
