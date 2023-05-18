@@ -38,7 +38,6 @@ const styleText={
   margin: 3,
 }
 
-const drawerWidth = 240;
 
 const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
   const [open, setOpen] = React.useState(false);
@@ -150,9 +149,9 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
-      <Box sx={{ display: 'flex',padding:4, justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex',padding:2, justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h3">{groupName}</Typography>
-        <Button variant="contained" paddingBottom = {1}><h2>Add expense</h2></Button> 
+        <Button variant="contained"><h3>Add expense</h3></Button> 
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ flexGrow: 1, padding: 2 }}>
@@ -183,8 +182,8 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
           </TableContainer>
         </Box>
 
-        <Box component={Paper} sx={{ width: '20%',justifyContent: 'center',paddingTop:0 }}>
-          <Typography variant="h5" align="center" padding={3}>
+        <Box component={Paper} sx={{ width: '20%',display: 'flex', flexDirection: 'column', justifyContent: 'center',paddingTop:0 }}>
+          <Typography variant="h5" align="center" paddingBottom={3}>
             Members
           </Typography>
           <Divider/>
