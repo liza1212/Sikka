@@ -4,14 +4,6 @@ import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField';
-<<<<<<< Updated upstream
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-
-=======
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -20,7 +12,6 @@ import ListItem from '@mui/material/ListItem';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
->>>>>>> Stashed changes
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -46,6 +37,8 @@ const styleText={
   display:'flex',
   margin: 3,
 }
+
+const drawerWidth = 240;
 
 
 const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
@@ -172,29 +165,6 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
       >
       <Box gridColumn="span 8">
         <h1>{groupName}</h1>
-<<<<<<< Updated upstream
-
-   <TableContainer component={Paper} sx={{ display:openInfo?'block':'none',}}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Description</TableCell>
-            <TableCell align="right">Contributor Name</TableCell>
-            <TableCell align="right">Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {groupExpense?groupExpense.map((expense) => (
-            <TableRow
-              key={expense.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {expense.eName}
-              </TableCell>
-              <TableCell align="right">{expense.eContributor}</TableCell>
-              <TableCell align="right">{expense.eAmount}</TableCell>
-=======
         <Button variant="outlined" onClick={addExpenseOpen} align="right">Add expense</Button>
         <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -203,7 +173,6 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
               <TableCell>Description</TableCell>
               <TableCell align="right">Contributor Name</TableCell>
               <TableCell align="right">Amount</TableCell>
->>>>>>> Stashed changes
             </TableRow>
           </TableHead>
           <TableBody>
