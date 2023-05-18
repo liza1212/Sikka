@@ -1,3 +1,4 @@
+
 import React from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -41,14 +42,22 @@ const styleText={
 const drawerWidth = 240;
 
 const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
-  const [groupExpense, setgroupExpense]= React.useState([]);
-  const [groupMembersList, setgroupMembersList]= React.useState([]);
-
-  //Add expense
   const [open, setOpen] = React.useState(false);
   const [expenseDescription, setexpenseDescription]= React.useState("");
   const [expenseContributor, setexpenseContributor]= React.useState("");
   const [expenseAmount, setexpenseAmount]= React.useState(0);
+  const [groupExpense, setgroupExpense]= React.useState([]);
+  const [groupMembersList, setgroupMembersList]= React.useState([]);
+
+  // const formatData=[
+  //   {eName:"Breakfast",eAmount:20,eContributor:"Liza"},
+  //   {eName:"Lunch", eAmount:30, eContributor:"Bishesh"},
+  //   {eName:"Snacks", eAmount:40, eContributor:"Libu"}
+  // ]
+
+  React.useEffect(()=>{
+    fetchExpenses(currentAccount);
+  })
 
   const addExpenseOpen = () => setOpen(true);
 
@@ -84,46 +93,9 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
   const handleChangeAmount=(e)=>{
     setexpenseAmount(e.target.value);
   }
+  
+  // var groupExpense = [];
 
-  //Add new member:
-  const [openMemInfo, setopenMemInfo]= React.useState(false);
-  const [newMember, setnewMember]=React.useState("");
-
-  const handleChangeNewMember=(e)=>{
-    setnewMember(e.target.value);
-  }
-
-  const addMemberOpen=()=> {
-    console.log("Reached here")
-    setopenMemInfo(true)
-  };
-
-  const memModalClose=()=>{
-    setopenMemInfo(false);
-  }
-
-  const submitMember=(newMember)=>{
-    addMember(currentAccount,newMember)
-    console.log("User added: ", newMember)
-    setopenMemInfo(true)
-  }
-
-  const addMember=async(groupAddress, newMember)=>{
-    const {contract}=state;
-    try{
-      await contract.methods.addMembers(groupAddress, newMember).send({from:currentAccount})
-      .once('members',async(members)=>{
-        await (fetchGroupMember(groupAddress))
-      console.log("Successfully new member aded.")
-      })
-
-    } catch(error){
-      console.log("Error: ", error)
-    }
-  }
-
-
-  //To return the list of expenses
   const fetchExpenses = async(groupAddress)=>{
     const {contract} = state;
     try{
@@ -147,8 +119,7 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
         console.log(error)
     }
   }
-  
-  //function to add a new expense
+    
   const addExpense= async(groupAddress,expenseName,expensePrice,contributorAddress)=>{
     const {contract} = state;
     try {
@@ -161,7 +132,6 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
     }
   }
 
-  //To return the list of members in a group
   const fetchGroupMember = async(groupAddress)=>{
     const {contract} = state
     try {
@@ -171,128 +141,69 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
     } catch (error) {
         console.log(`Cannot get group member of ${groupAddress}`,error)
     }
+  
   }
+
 
   React.useEffect(()=>{
     fetchGroupMember(groupAddress)
-    fetchExpenses(currentAccount);
-  },[])
+  })
 
   return (
-    <div>
-      <Box 
-        component="main"
-        sx={{
-          backgroudColor:(theme)=>
-          theme.palette.mode === 'light'
-          ? theme.palette.grey[100]
-          : theme.palette.grey[900],
-          flexGrow: 1,
-          overflow: 'auto',
-          display:openInfo?'block':'none',
-        }}
-      >
-        <h1>{groupName}</h1>
+    <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
+      <Box sx={{ display: 'flex',padding:4, justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h3">{groupName}</Typography>
+        <Button variant="contained" paddingBottom = {1}><h2>Add expense</h2></Button> 
+      </Box>
+      <Box sx={{ display: 'flex' }}>
+        <Box sx={{ flexGrow: 1, padding: 2 }}>
+          <TableContainer component={Paper}>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Description</TableCell>
+                  <TableCell align="right">Contributor Name</TableCell>
+                  <TableCell align="right">Amount</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {groupExpense.map((expense, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {expense.eName}
+                    </TableCell>
+                    <TableCell align="right">{expense.eContributor}</TableCell>
+                    <TableCell align="right">{expense.eAmount}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
 
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-          },
-        }}
-        variant="permanent"
-        anchor="right"
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }} >
-        <Typography variant="h5" align='center' padding={3}>Members</Typography>
-          <Divider />
+        <Box component={Paper} sx={{ width: '20%',display: 'flex', flexDirection: 'column', justifyContent: 'center',paddingTop:0 }}>
+          <Typography variant="h5" align="center" paddingBottom={3}>
+            Members
+          </Typography>
+          <Divider/>
           <List>
-            {groupMembersList.map((member,index) => (
+            {groupMembersList.map((member, index) => (
               <ListItem key={index}>
-                  <ListItemIcon><AccountBoxIcon/></ListItemIcon>
-                  <ListItemText primary={`${member.slice(0, 5)}${'.'.repeat(3)}${member.slice(-4)}`} />
+                <ListItemIcon>
+                  <AccountBoxIcon />
+                </ListItemIcon>
+                <ListItemText primary={`${member.slice(0, 5)}${'.'.repeat(3)}${member.slice(-4)}`} />
               </ListItem>
             ))}
           </List>
-          <Button variant="outlined" justify="center" onClick={addMemberOpen} >Add member</Button>
-
-          {/* //Model for Add Member */}
-      <Modal 
-          open={openMemInfo}
-          onClose={memModalClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-      >
-        <Box 
-          sx={style} 
-          component="form" 
-          autocomplete="off">
-          <Typography id="modal-modal-title" variant="h6" component="h2" alignContent= "center">
-            The more, the merrier.
-          </Typography>
-          
-           <TextField
-              sx={styleText}
-              required
-              value={newMember}
-              onChange={handleChangeNewMember}
-              id="standard-search"
-              label="User Account"
-            />
-          
-          <Button 
-            variant="outlined" 
-            onClick={submitMember(newMember)}
-            style={{
-              cursor:'pointer',
-              dispay:'flex',
-              alignItems:'right',
-              align: 'right'
-            }}
-          >
-              Submit
+          <Button variant="outlined" style={{ alignSelf: 'center' }}>
+            Add member
           </Button>
-        </Box> 
-      </Modal>
-
-
-
         </Box>
-      </Drawer>
-
-   <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Description</TableCell>
-            <TableCell align="right">Contributor Name</TableCell>
-            <TableCell align="right">Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {groupExpense?groupExpense.map((expense) => (
-            <TableRow
-              key={expense.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {expense.eName}
-              </TableCell>
-              <TableCell align="right">{expense.eContributor}</TableCell>
-              <TableCell align="right">{expense.eAmount}</TableCell>
-            </TableRow>
-          )):<></>}
-        </TableBody>
-      </Table>
-    </TableContainer>
-
-
-        <Button variant="outlined" onClick={addExpenseOpen} sx={{display:openInfo?'block':'none'}}>Add expense</Button>
-
+      </Box>
       {/* //Model for Add Expense */}
       <Modal 
           open={open}
@@ -349,9 +260,8 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
           </Button>
         </Box> 
       </Modal>
-      </Box>
-    </div>
-  )
+    </Box>
+  );
 }
 
 export default GroupInfo
