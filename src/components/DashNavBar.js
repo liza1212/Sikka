@@ -76,6 +76,7 @@ const mdTheme = createTheme();
 
 const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
     const [menuItem,setMenuItem] = React.useState("Dashboard");
+    const [LoggedIn,setLoggedIn] = React.useState(false)
     const [open, setopen] = React.useState(true);
     const toggleDrawer=()=>{
         setopen(!open)

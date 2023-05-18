@@ -10,6 +10,19 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
+import Drawer from '@mui/material/Drawer';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -36,6 +49,7 @@ const styleText={
   margin: 3,
 }
 
+const drawerWidth = 240;
 
 const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
   const [open, setOpen] = React.useState(false);
@@ -160,6 +174,31 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
         }}
       >
         <h1>{groupName}</h1>
+
+        <Drawer
+        variant="permanent"
+        anchor="right"
+        sx={{
+          display:openInfo?'block':'none',
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: 'auto' }}>
+        <Typography variant="h5" align='center' padding={3}>Members</Typography>
+          <Divider />
+          <List>
+            {groupMembersList.map((member,index) => (
+              <ListItem key={index}>
+                  <ListItemIcon><AccountBoxIcon/></ListItemIcon>
+                  <ListItemText primary={`${member.slice(0, 5)}${'.'.repeat(3)}${member.slice(-4)}`} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
 
    <TableContainer component={Paper} sx={{ display:openInfo?'block':'none',}}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
