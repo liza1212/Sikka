@@ -39,9 +39,8 @@ const styleText={
 }
 
 
-const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
+const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) => {
   //Group Info
-  // const [groupAddress,setGroupAddress] = React.useState("");
   const [groupExpense, setgroupExpense]= React.useState([]);
   const [groupMembersList, setgroupMembersList]= React.useState([]);
 
@@ -50,6 +49,7 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
   const [expenseDescription, setexpenseDescription]= React.useState("");
   const [expenseContributor, setexpenseContributor]= React.useState("");
   const [expenseAmount, setexpenseAmount]= React.useState(0);
+
    //Add new member:
    const [openMemInfo, setopenMemInfo]= React.useState(false);
    const [newMember, setnewMember]=React.useState("");
@@ -66,6 +66,7 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
     setExpenseOpen(false);
     console.log("Contributor ",expenseContributor);
     console.log("Amount ",expenseAmount);
+    console.log("Herher",currentGroup)
     setexpenseAmount(0);
     setexpenseContributor("");
     setexpenseDescription("")
@@ -95,20 +96,21 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
     setnewMember(e.target.value);
   }
 
-  const submitMember=(newMember)=>{
+  const submitMember=()=>{
     setopenMemInfo(false)
-    console.log( newMember,groupAddress)
-    addMember(groupAddress,newMember)
+    // console.log( newMember,groupAddress)
+    setnewMember("")
+    addMembers(currentGroup,newMember)
     console.log("User added: ", newMember)
   }
 
-  const addMember=async(groupAddress, newMember)=>{
+  const addMembers=async(groupAddress, newMember)=>{
     const {contract}=state;
+    console.log(state)
     try{
       await contract.methods.addMembers(groupAddress, newMember).send({from:currentAccount})
       .once('receipt',async(receipt)=>{
         await (fetchGroupMember(groupAddress))
-      console.log("Successfully new member added.")
       })
 
     } catch(error){
@@ -168,7 +170,7 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
   }
 
   React.useEffect(()=>{
-    fetchGroupMember(groupAddress)
+    fetchGroupMember(currentGroup)
     fetchExpenses(currentAccount);
   },[])
 
