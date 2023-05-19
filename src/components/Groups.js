@@ -26,7 +26,6 @@ const styleText={
 }
 
 const Groups = ({loadWeb3,state,currentAccount}) => {
-  const [groupLists, setgroupLists]=React.useState([]);
   const [groupNameValue, setgroupNameValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
   
@@ -54,8 +53,10 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
     setgroupNameValue(e.target.value);
   }
 
-  const [groupAddress, setgroupAddress]= React.useState("")
-  const [groupName, setgroupName] = React.useState("")
+  // const [groupAddress, setgroupAddress]= React.useState("")
+  // const [groupName, setgroupName] = React.useState("")
+  const [memberedGroupInfo,setmemberedGroupInfo]= React.useState({groupAddress:[],groupName:[]})
+  const [currentGroup,setcurrentGroup] = React.useState("")
   const [openInfo, setopenInfo] = React.useState(false)
 
     const addGroup= async(name)=>{
@@ -84,8 +85,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           const memberedGroupAddress= result[0];
           const memberedGroupName = result[1];
           console.log(memberedGroupAddress, memberedGroupName);
-          setgroupAddress(memberedGroupAddress);
-          setgroupLists(memberedGroupName);
+          setmemberedGroupInfo({groupAddress:memberedGroupAddress,groupName:memberedGroupName});
           // return memberedGroupAddress,memberedGroupName
       } catch (error) {
           console.log("Cannot fetch membered group info",error)
@@ -144,18 +144,21 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
       >
         {/* <GroupList/> */}
         <List component="nav"  style={{ display: !openInfo ? 'block' : 'none' }}>
-            {groupLists.map((group)=>(
+            {memberedGroupInfo.groupName.map((group, index) => (
                 <ListItemButton 
-                onClick={()=>{setopenInfo(true) ;setgroupName(group)}}>
-                {/* // <ListItemButton> */}
-                {console.log("Group name is ",groupName)}
-                <ListItemText>{group}</ListItemText>
-            </ListItemButton>
-            ))}
+                  key={index}
+                  onClick={() => {
+                    setopenInfo(true);
+                    setcurrentGroup(memberedGroupInfo.groupAddress[index]);
+                  }}
+                >
+                  <ListItemText>{group}</ListItemText>
+                </ListItemButton>
+              ))}
         <Button variant="outlined" onClick={createGroup}>Create a group</Button>
 
         </List>
-        <GroupInfo groupName={groupName} state={state} currentAccount={currentAccount} openInfo={openInfo} groupAddress={groupAddress}></GroupInfo>
+        <GroupInfo groupName={memberedGroupInfo.groupName} state={state} currentAccount={currentAccount} openInfo={openInfo} currentGroup={currentGroup}/>
 
         <Modal 
           open={open}
@@ -198,3 +201,5 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
 }
 
 export default Groups
+
+
