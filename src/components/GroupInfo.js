@@ -4,8 +4,6 @@ import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField';
-import Drawer from '@mui/material/Drawer';
-import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
@@ -171,7 +169,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
 
   React.useEffect(()=>{
     fetchGroupMember(currentGroup)
-    fetchExpenses(currentAccount);
+    fetchExpenses(currentGroup);
   },[])
 
   return (

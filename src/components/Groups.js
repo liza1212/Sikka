@@ -57,10 +57,11 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
   // const [groupName, setgroupName] = React.useState("")
   const [memberedGroupInfo,setmemberedGroupInfo]= React.useState({groupAddress:[],groupName:[]})
   const [currentGroup,setcurrentGroup] = React.useState("")
+  const [currentGroupName,setcurrentGroupName] = React.useState("");
   const [openInfo, setopenInfo] = React.useState(false)
 
     const addGroup= async(name)=>{
-      const {web3,contract} = state;
+      const {contract} = state;
       console.log(contract)
       console.log(name)
 
@@ -77,7 +78,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
     }
 
     const fetchMemberedGroup = async(currentAccount)=>{
-      const {web3,contract} = state;
+      const {contract} = state;
       console.log(currentAccount)
 
       try {
@@ -150,6 +151,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
                   onClick={() => {
                     setopenInfo(true);
                     setcurrentGroup(memberedGroupInfo.groupAddress[index]);
+                    setcurrentGroupName(group)
                   }}
                 >
                   <ListItemText>{group}</ListItemText>
@@ -158,7 +160,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
         <Button variant="outlined" onClick={createGroup}>Create a group</Button>
 
         </List>
-        <GroupInfo groupName={memberedGroupInfo.groupName} state={state} currentAccount={currentAccount} openInfo={openInfo} currentGroup={currentGroup}/>
+        {openInfo &&<GroupInfo groupName={currentGroupName} state={state} currentAccount={currentAccount} openInfo={openInfo} currentGroup={currentGroup}/>}
 
         <Modal 
           open={open}
