@@ -40,23 +40,30 @@ const styleText={
 
 
 const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) => {
+  //Group Info
+  // const [groupAddress,setGroupAddress] = React.useState("");
   const [groupExpense, setgroupExpense]= React.useState([]);
   const [groupMembersList, setgroupMembersList]= React.useState([]);
 
   //Add expense
-  const [open, setOpen] = React.useState(false);
+  const [expenseOpen, setExpenseOpen] = React.useState(false);
   const [expenseDescription, setexpenseDescription]= React.useState("");
   const [expenseContributor, setexpenseContributor]= React.useState("");
   const [expenseAmount, setexpenseAmount]= React.useState(0);
+   //Add new member:
+   const [openMemInfo, setopenMemInfo]= React.useState(false);
+   const [newMember, setnewMember]=React.useState("");
 
-  const addExpenseOpen = () => setOpen(true);
+  const addExpenseOpen = () => setExpenseOpen(true);
+  const addMemberOpen= () =>  setopenMemInfo(true);
 
   const modalClose = () => {
-    setOpen(false)
+    setExpenseOpen(false)
+    setopenMemInfo(false);
   };
 
   const submitGroup=()=>{
-    setOpen(false);
+    setExpenseOpen(false);
     console.log("Contributor ",expenseContributor);
     console.log("Amount ",expenseAmount);
     setexpenseAmount(0);
@@ -84,36 +91,24 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
     setexpenseAmount(e.target.value);
   }
 
-  //Add new member:
-  const [openMemInfo, setopenMemInfo]= React.useState(false);
-  const [newMember, setnewMember]=React.useState("");
-
   const handleChangeNewMember=(e)=>{
     setnewMember(e.target.value);
   }
 
-  const addMemberOpen=()=> {
-    console.log("Reached here")
-    setopenMemInfo(true)
-  };
-
-  const memModalClose=()=>{
-    setopenMemInfo(false);
-  }
-
   const submitMember=(newMember)=>{
-    addMember(currentAccount,newMember)
+    setopenMemInfo(false)
+    console.log( newMember,groupAddress)
+    addMember(groupAddress,newMember)
     console.log("User added: ", newMember)
-    setopenMemInfo(true)
   }
 
   const addMember=async(groupAddress, newMember)=>{
     const {contract}=state;
     try{
       await contract.methods.addMembers(groupAddress, newMember).send({from:currentAccount})
-      .once('members',async(members)=>{
+      .once('receipt',async(receipt)=>{
         await (fetchGroupMember(groupAddress))
-      console.log("Successfully new member aded.")
+      console.log("Successfully new member added.")
       })
 
     } catch(error){
@@ -181,7 +176,7 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
       <Box sx={{ display: 'flex',padding:2, justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h3">{groupName}</Typography>
-        <Button variant="contained"><h3>Add expense</h3></Button> 
+        <Button variant="contained" onClick={addExpenseOpen}   ><h3>Add expense</h3></Button> 
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ flexGrow: 1, padding: 2 }}>
@@ -212,7 +207,7 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
           </TableContainer>
         </Box>
 
-        <Box component={Paper} sx={{ width: '20%',display: 'flex', flexDirection: 'column', justifyContent: 'center',paddingTop:0 }}>
+        <Box component={Paper} sx={{ width: '20%',display: 'flex', flexDirection: 'column', justifyContent: 'center',padding:2 }}>
           <Typography variant="h5" align="center" paddingBottom={3}>
             Members
           </Typography>
@@ -223,18 +218,18 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
                 <ListItemIcon>
                   <AccountBoxIcon />
                 </ListItemIcon>
-                <ListItemText primary={`${member.slice(0, 5)}${'.'.repeat(3)}${member.slice(-4)}`} />
+                <ListItemText primary={`${member.slice(0, 5)}${'.'.repeat(9)}${member.slice(-4)}`} />
               </ListItem>
             ))}
           </List>
-          <Button variant="outlined" style={{ alignSelf: 'center' }}>
+          <Button variant="outlined" onClick={addMemberOpen} style={{ alignSelf: 'center' }}>
             Add member
           </Button>
         </Box>
       </Box>
       {/* //Model for Add Expense */}
       <Modal 
-          open={open}
+          open={expenseOpen}
           onClose={modalClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
@@ -287,6 +282,41 @@ const GroupInfo = ({groupAddress, groupName, state, currentAccount,openInfo}) =>
               Submit
           </Button>
         </Box> 
+      </Modal>
+
+      <Modal
+        open={openMemInfo}
+        onClose={modalClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} 
+          component="form" 
+          autocomplete="off">
+        <Typography id="modal-modal-title" variant="h6" component="h2" alignContent= "center">
+            Let's meet new people and make connections...
+          </Typography>
+        <TextField
+              sx={styleText}
+              required
+              value={newMember}
+              onChange={handleChangeNewMember}
+              id="standard-search"
+              label="New Member"
+            />
+       
+          <Button 
+            variant="outlined" 
+            onClick={submitMember}
+            style={{
+              cursor:'pointer',
+              dispay:'flex',
+              alignItems:'right',
+              align: 'right'
+            }}>
+              Submit
+          </Button>
+        </Box>
       </Modal>
     </Box>
   );
