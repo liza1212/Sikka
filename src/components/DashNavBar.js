@@ -21,11 +21,10 @@ import GroupIcon from '@mui/icons-material/Group';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import Dashboard from './Dashboard';
-import Friends from './Friends';
+import Payments from './Payments';
 import Reports from './Reports';
 import Groups from './Groups';
-import Payments from './Payments';
-import GroupInfo from './GroupInfo';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -172,11 +171,11 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
             </ListItemIcon>
             <ListItemText primary="Groups" />
           </ListItemButton>
-          <ListItemButton onClick={()=>setMenuItem("Friends")}>
+          <ListItemButton onClick={()=>setMenuItem("Payments")}>
             <ListItemIcon>
-              <GroupAddIcon />
+              <AttachMoneyIcon />
             </ListItemIcon>
-            <ListItemText primary="Friends" />
+            <ListItemText primary="Payments" />
           </ListItemButton>
           <ListItemButton onClick={()=>setMenuItem("Reports")}>
             <ListItemIcon>
@@ -202,7 +201,6 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           <Toolbar />
         {menuItem === "Dashboard" && <Dashboard/>}  
         {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
-        {menuItem === "Friends" && <Friends/>}  
         {menuItem === "Reports" && <Reports/>}  
         {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>}
 
