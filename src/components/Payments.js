@@ -12,32 +12,59 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 let member, memberCount;
 const Payments = ({state,currentAccount}) => {
+
+
   const getToPay = async(groupAddress)=>{
       const {contract} = state;
       try {
-          const result = fetchGroupMember(groupAddress)
-          member=result[0]
-          memberCount=result[1]
+
+          // const result = fetchGroupMember(groupAddress)
+          // console.log(result)
+          // member=result[0]
+          // memberCount=result[1]
+          // const toPay = []
+          // for(let i = 0;i<memberCount;i++){
+          //     const amount = await contract.methods.getToPay(currentAccount,member[i],groupAddress).call()
+          //     toPay.push({group:groupAddress,to:member[i],amount:amount})
+          // }
+          // console.log("To pay has the valueS: ",toPay);
+  
+          member=memberList
+          memberCount=memberList.length
+          console.log("Member and member count: ",member, memberCount)
           const toPay = []
           for(let i = 0;i<memberCount;i++){
-              const amount = await contract.methods.getToPay(currentAccount,member[i],groupAddress).call()
+              const amount = await contract.methods.getTopay(currentAccount,member[i],groupAddress).call()
               toPay.push({group:groupAddress,to:member[i],amount:amount})
           }
+          console.log("To pay has the valueS: ",toPay);
+
       } catch (error) {
           console.log("Contract error",error)
       }
     }
-   
-
-  const fetchGroupMember = async(groupAddress)=>{
-      const {contract} = state
+  
+  
+    const splitwise = async(groupAddress)=>{
+      const {contract} = state;
       try {
-          const GroupMember = await contract.methods.getMemberes(currentAccount).call()
-          return GroupMember,GroupMember.length
+          await contract.methods.splitwise(groupAddress);
+          console.log("This function has been called.")
       } catch (error) {
-          console.log(`Cannot get group member of ${groupAddress}`,error)
+          console.log("Can't calculate balance split",error)
       }
-  }
+    }
+
+
+  // const fetchGroupMember = async(groupAddress)=>{
+  //     const {contract} = state
+  //     try {
+  //         const GroupMember = await contract.methods.getMemberes(currentAccount).call()
+  //         return GroupMember,GroupMember.length
+  //     } catch (error) {
+  //         console.log(`Cannot get group member of ${groupAddress}`,error)
+  //     }
+  // }
 
   const [groupMemberInfo, setgroupMemberInfo]= React.useState({groupAddress:[], groupName:[]})
 
@@ -51,8 +78,6 @@ const Payments = ({state,currentAccount}) => {
       console.log("Error: ", error)
     }
   }
-
-
 
   const [memberList, setmemberList]= React.useState([])
 
@@ -68,7 +93,7 @@ const Payments = ({state,currentAccount}) => {
   }
 
 
-  const [payments, setpayments]=React.useState([])
+  // const [payments, setpayments]=React.useState([])
   //find which group, find members of 
   const [expanded, setExpanded] = React.useState(false);
 
@@ -82,44 +107,43 @@ const Payments = ({state,currentAccount}) => {
 
   const memberInformation=(member)=>{
     let index=groupMemberInfo.groupName.indexOf(member);
-    console.log("Index of group member",member," is: ",index)
+    // console.log("Index of group member",member," is: ",index)
     showMember(groupMemberInfo.groupAddress[index])
-    console.log(memberList)
+    getToPay(groupMemberInfo.groupAddress[index]);
+    console.log("Group member list: ",memberList)
   }
   React.useEffect(()=>{
     getMemberedGroups(currentAccount);
   })
 
-  // let index
-     {/* { 
-          index= groupMemberInfo.groupName.findIndex(member),
-          showMember(groupMemberInfo.groupAddress[index])
-          } */}
+
   return (
     <div style={{marginLeft: 30, marginRight: 30}}>
         <div>
             <h2>Due</h2>
         </div>
 
-      {groupMemberInfo.groupName.map((member)=>(
+      {groupMemberInfo.groupName.map((group)=>(
 
-      <Accordion expanded={expanded === member} onChange={handleChange(member)} onClick={()=>memberInformation(member)}>
+      <Accordion expanded={expanded === group} onChange={handleChange(group)} onClick={()=>{memberInformation(group);  splitwise(group)}}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
         >
           <Typography sx={{ width: '33%', flexShrink: 0 }}>
-            {member}
+            {group}
           </Typography>
                     
         </AccordionSummary>
+
+        {memberList.map((member)=>(
         <AccordionDetails>
-              <Card sx={{ display: 'flex' }}>
+      <Card sx={{ display: 'flex' }}>
       <CardActionArea>
         <CardContent >
-          <Typography gutterBottom variant="h5" component="div">
-            Member name
+          <Typography gutterBottom component="div">
+            {member}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Money
@@ -132,7 +156,9 @@ const Payments = ({state,currentAccount}) => {
         </Button>
       </CardActions>
     </Card>
-        </AccordionDetails>
+        </AccordionDetails>  
+        ))}
+        
       </Accordion>
       ))}
 

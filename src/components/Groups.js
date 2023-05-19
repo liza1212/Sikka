@@ -69,6 +69,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           await contract.methods.createGroup(name).send({from:currentAccount})
           .once('receipt',async(receipt)=>{
           await(fetchMemberedGroup(currentAccount))
+          
       })
       }catch(error){
           if (error.message) {
@@ -82,7 +83,9 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
       console.log(currentAccount)
 
       try {
+          // console.log("Hhhhhhhhhhhhhheki")
           const result=await contract.methods.getMemberedGroups(currentAccount).call();
+          // console.log(await contract.methods.getMemberedGroups(currentAccount).call())
           const memberedGroupAddress= result[0];
           const memberedGroupName = result[1];
           console.log(memberedGroupAddress, memberedGroupName);
@@ -90,8 +93,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           // return memberedGroupAddress,memberedGroupName
       } catch (error) {
           console.log("Cannot fetch membered group info",error)
-      }
-      
+      } 
     }
     
     const addMember= async(groupAddress,memberAddress)=>{
@@ -100,6 +102,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           await contract.methods.addMember(groupAddress,memberAddress).send({from:currentAccount})
           .once('receipt',async(receipt)=>{
           await(fetchGroupMember(groupAddress))
+          
       })
       }catch(error){
           if (error.message) {
@@ -124,6 +127,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
       const {contract} = state;
       try {
           await contract.methods.splitwise(groupAddress);
+          console.log("splitwise")
       } catch (error) {
           console.log("Can't calculate balance split",error)
       }
