@@ -159,7 +159,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
   const fetchGroupMember = async(groupAddress)=>{
     const {contract} = state
     try {
-        const GroupMember = await contract.methods.getMembers(currentAccount).call()
+        const GroupMember = await contract.methods.getMembers(groupAddress).call()
         setgroupMembersList(GroupMember)
         // return GroupMember,GroupMember.length
     } catch (error) {
