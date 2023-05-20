@@ -80,11 +80,14 @@ const Payments = ({state,currentAccount}) => {
   }
 
   const [memberList, setmemberList]= React.useState([])
-
+  
   const showMember = async(groupAddress)=>{
     const {contract} = state
     try {
-        const GroupMember = await contract.methods.getMembers(currentAccount).call()
+        let GroupMember = await contract.methods.getMembers(currentAccount).call()
+        //To get the list of group members except for the current member:
+
+        GroupMember=GroupMember.filter((m)=>m!==currentAccount)
         setmemberList(GroupMember);
     } 
     catch (error) {

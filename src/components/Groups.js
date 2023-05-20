@@ -121,8 +121,6 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           }
     }
   
-
-  
     const splitwise = async(groupAddress)=>{
       const {contract} = state;
       try {
