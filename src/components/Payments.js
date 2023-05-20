@@ -13,6 +13,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 let member, memberCount;
 const Payments = ({state,currentAccount}) => {
 
+  const [payements, setPayements] = React.useState([]);
 
   const getToPay = async(groupAddress)=>{
       const {contract} = state;
@@ -37,7 +38,8 @@ const Payments = ({state,currentAccount}) => {
               const amount = await contract.methods.getTopay(currentAccount,member[i],groupAddress).call()
               toPay.push({group:groupAddress,to:member[i],amount:amount})
           }
-          console.log("To pay has the valueS: ",toPay);
+          setPayements(toPay);
+          // console.log("To pay has the valueS: ",toPay);
 
       } catch (error) {
           console.log("Contract error",error)
@@ -84,7 +86,7 @@ const Payments = ({state,currentAccount}) => {
   const showMember = async(groupAddress)=>{
     const {contract} = state
     try {
-        let GroupMember = await contract.methods.getMembers(currentAccount).call()
+        let GroupMember = await contract.methods.getMembers(groupAddress).call()
         //To get the list of group members except for the current member:
 
         GroupMember=GroupMember.filter((m)=>m!==currentAccount)
@@ -108,16 +110,31 @@ const Payments = ({state,currentAccount}) => {
     console.log("IF only")
   }
 
-  const memberInformation=(member)=>{
-    let index=groupMemberInfo.groupName.indexOf(member);
-    // console.log("Index of group member",member," is: ",index)
-    showMember(groupMemberInfo.groupAddress[index])
-    getToPay(groupMemberInfo.groupAddress[index]);
+  const memberInformation=(groupAddress)=>{
+    showMember(groupAddress);
+    // getToPay(groupAddress) ;
+    console.log("Here",payements);
     console.log("Group member list: ",memberList)
   }
   React.useEffect(()=>{
     getMemberedGroups(currentAccount);
-  })
+  },[])
+
+
+  const getPay = async()=>{
+    const {contract} = state;
+    console.log(state)
+    try {
+      let cA ="0x016511632200B3fB504FE05Fafb476c72193B006"
+      let groupAddress="0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"
+      await contract.methods.splitwise(groupAddress).send({from:cA});
+      let member = "0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"
+       console.log(await contract.methods.getTopay(cA,member,groupAddress).call())
+        // console.log("To pay has the valueS: ",toPay);
+    } catch (error) {
+        console.log("Contract error",error)
+    }
+  }
 
 
   return (
@@ -125,10 +142,11 @@ const Payments = ({state,currentAccount}) => {
         <div>
             <h2>Due</h2>
         </div>
+        <Button onClick={()=>getPay()}>GetPay</Button>
 
-      {groupMemberInfo.groupName.map((group)=>(
+      {/* {groupMemberInfo.groupName.map((group,index)=>(
 
-      <Accordion expanded={expanded === group} onChange={handleChange(group)} onClick={()=>{memberInformation(group);  splitwise(group)}}>
+      <Accordion expanded={expanded === group} onChange={handleChange(group)} onClick={()=>{splitwise(groupMemberInfo.groupAddress[index]); memberInformation(groupMemberInfo.groupAddress[index])}}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
@@ -163,7 +181,7 @@ const Payments = ({state,currentAccount}) => {
         ))}
         
       </Accordion>
-      ))}
+      ))} */}
 
 
   
