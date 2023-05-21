@@ -18,30 +18,26 @@ const Payments = ({state,currentAccount}) => {
   const getToPay = async(groupAddress)=>{
       const {contract} = state;
       try {
-
-          // const result = fetchGroupMember(groupAddress)
-          // console.log(result)
-          // member=result[0]
-          // memberCount=result[1]
-          // const toPay = []
-          // for(let i = 0;i<memberCount;i++){
-          //     const amount = await contract.methods.getToPay(currentAccount,member[i],groupAddress).call()
-          //     toPay.push({group:groupAddress,to:member[i],amount:amount})
-          // }
-          // console.log("To pay has the valueS: ",toPay);
-  
           member=memberList
           memberCount=memberList.length
           console.log("Member and member count: ",member, memberCount)
-          const toPay = []
+          let toPay=[]
           for(let i = 0;i<memberCount;i++){
               const amount = await contract.methods.getTopay(currentAccount,member[i],groupAddress).call()
-              toPay.push({group:groupAddress,to:member[i],amount:amount})
+              toPay = {
+                ...toPay,
+                [groupAddress]: {
+                  ...toPay[groupAddress],
+                  [member[i]]: amount,
+                },
+              };
+            }
+            setPayements(toPay);
+            console.log(payements)
           }
-          setPayements(toPay);
           // console.log("To pay has the valueS: ",toPay);
 
-      } catch (error) {
+       catch (error) {
           console.log("Contract error",error)
       }
     }
@@ -50,7 +46,7 @@ const Payments = ({state,currentAccount}) => {
     const splitwise = async(groupAddress)=>{
       const {contract} = state;
       try {
-          await contract.methods.splitwise(groupAddress);
+        await contract.methods.splitwise(groupAddress).send({from:currentAccount});
           console.log("This function has been called.")
       } catch (error) {
           console.log("Can't calculate balance split",error)
@@ -109,7 +105,7 @@ const Payments = ({state,currentAccount}) => {
 
   const memberInformation=(groupAddress)=>{
     showMember(groupAddress);
-    // getToPay(groupAddress) ;
+    getToPay(groupAddress) ;
     console.log("Here",payements);
     console.log("Group member list: ",memberList)
   }
@@ -118,16 +114,13 @@ const Payments = ({state,currentAccount}) => {
   },[])
 
 
-  const getPay = async()=>{
+  const getPay = async(groupAddress,memberAddress)=>{
     const {contract} = state;
     console.log(state)
     try {
-      let cA ="0x016511632200B3fB504FE05Fafb476c72193B006"
-      let groupAddress="0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"
-      await contract.methods.splitwise(groupAddress).send({from:cA});
-      let member = "0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"
-       console.log(await contract.methods.getTopay(cA,member,groupAddress).call())
+       let amount = await contract.methods.getTopay(currentAccount,memberAddress,groupAddress).call()
         // console.log("To pay has the valueS: ",toPay);
+        return amount
     } catch (error) {
         console.log("Contract error",error)
     }
@@ -139,11 +132,11 @@ const Payments = ({state,currentAccount}) => {
         <div>
             <h2>Due</h2>
         </div>
-        <Button onClick={()=>getPay()}>GetPay</Button>
+        {/* <Button onClick={()=>getPay()}>GetPay</Button> */}
 
-      {/* {groupMemberInfo.groupName.map((group,index)=>(
+      {groupMemberInfo.groupName.map((group,index)=>(
 
-      <Accordion expanded={expanded === group} onChange={handleChange(group)} onClick={()=>{splitwise(groupMemberInfo.groupAddress[index]); memberInformation(groupMemberInfo.groupAddress[index])}}>
+      <Accordion expanded={expanded === group} onChange={handleChange(group)} onClick={()=>{memberInformation(groupMemberInfo.groupAddress[index])}}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
@@ -154,7 +147,7 @@ const Payments = ({state,currentAccount}) => {
           </Typography>
                     
         </AccordionSummary>
-
+        <Button varaint="contained" onClick={()=>splitwise(groupMemberInfo.groupAddress[index])}>Splitwise</Button>
         {memberList.map((member)=>(
         <AccordionDetails>
       <Card sx={{ display: 'flex' }}>
@@ -165,6 +158,8 @@ const Payments = ({state,currentAccount}) => {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Money
+            {/* {payements ? (payements.find((item) => item.group === group && item.to === member)).amount:"---"} */}
+            {/* {payements[group][member]} */}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -178,11 +173,11 @@ const Payments = ({state,currentAccount}) => {
         ))}
         
       </Accordion>
-      ))} */}
+      ))} 
 
 
   
-        {/* <div style={{marginTop:80}}>
+        <div style={{marginTop:80}}>
             <h2>Paid</h2>
         </div>
             <Card sx={{ maxWidth: 345 }}>
@@ -196,7 +191,7 @@ const Payments = ({state,currentAccount}) => {
           </Typography>
         </CardContent>
       </CardActionArea>
-    </Card> */}
+    </Card>
     </div>
   )
 
