@@ -17,6 +17,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import {CardActionArea, CardActions } from '@mui/material';
 
 
 const style = {
@@ -167,16 +172,69 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
     }
   }
 
+
   React.useEffect(()=>{
     fetchGroupMember(currentGroup)
     fetchExpenses(currentGroup);
   },[])
 
+
+  //FOr Tab
+  const [selectedTab, setSelectedTab] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    getToPay( )
+    setSelectedTab(newValue);
+  };
+
+  //for payements
+  const [payements, setPayements] = React.useState({});
+
+  const getToPay = async()=>{
+      const {contract} = state;
+      try {
+          console.log("Member and member count: ",groupMembersList,groupMembersList.length)
+          let toPay={}
+          for(let i = 0;i<groupMembersList.length;i++){
+              const amount = await contract.methods.getTopay(currentAccount,groupMembersList[i],currentGroup).call()
+              toPay = {
+                  ...toPay,
+                  [groupMembersList[i]]: amount,
+              };
+            }
+            setPayements(toPay);
+            console.log(payements)
+          }
+          // console.log("To pay has the valueS: ",toPay);
+
+       catch (error) {
+          console.log("Contract error",error)
+      }
+    }
+  
+  
+    const splitwise = async()=>{
+      const {contract} = state;
+      try {
+        await contract.methods.splitwise(currentGroup).send({from:currentAccount});
+          console.log("This function has been called.")
+      } catch (error) {
+          console.log("Can't calculate balance split",error)
+      }
+    }
+  
   return (
-    <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
+    <div>
+      <Tabs value={selectedTab} onChange={handleChange}>
+        <Tab label="Group Info" />
+        <Tab label="Splitwise" />
+      </Tabs>
+      {selectedTab === 0 && 
+        <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
       <Box sx={{ display: 'flex',padding:2, justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h3">{groupName}</Typography>
-        <Button variant="contained" onClick={addExpenseOpen}   ><h3>Add expense</h3></Button> 
+        <Button variant="contained" onClick={()=>{splitwise();}}>Spiltwise</Button> 
+        <Button variant="contained" onClick={addExpenseOpen}><h3>Add expense</h3></Button> 
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ flexGrow: 1, padding: 2 }}>
@@ -205,7 +263,9 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
               </TableBody>
             </Table>
           </TableContainer>
+          
         </Box>
+
 
         <Box component={Paper} sx={{ width: '20%',display: 'flex', flexDirection: 'column', justifyContent: 'center',padding:2 }}>
           <Typography variant="h5" align="center" paddingBottom={3}>
@@ -319,6 +379,36 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
         </Box>
       </Modal>
     </Box>
+        }
+      {selectedTab === 1 &&
+        <Box sx={{padding:2, justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant='h4'> Due Remaining</Typography>
+          {groupMembersList.map((member,index)=>(
+            <Box sx={{padding:1}}>
+              <Card sx={{ display: 'flex'}}>
+                <CardActionArea>
+                  <CardContent >
+                    <Typography gutterBottom component="div">
+                      {member}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      { payements!== undefined ? payements[member]+" WEI"  :"------------"}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+                <CardActions>
+                  <Button size="small" color="primary" onClick={()=>{}}>
+                    Pay
+                  </Button>
+                </CardActions>
+              </Card>
+            </Box>
+            
+          ))}
+        </Box>}
+    </div>
+    
+    
   );
 }
 

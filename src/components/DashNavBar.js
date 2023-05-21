@@ -171,7 +171,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
             </ListItemIcon>
             <ListItemText primary="Groups" />
           </ListItemButton>
-          <ListItemButton onClick={()=>setMenuItem("Payments")}>
+          {/* <ListItemButton onClick={()=>setMenuItem("Payments")}>
             <ListItemIcon>
               <AttachMoneyIcon />
             </ListItemIcon>
@@ -182,7 +182,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
               <BarChartIcon />
             </ListItemIcon>
             <ListItemText primary="Reports" />
-          </ListItemButton>
+          </ListItemButton> */}
           </List>
         </Drawer>
         {/* </Box> */}
@@ -201,8 +201,8 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           <Toolbar />
         {menuItem === "Dashboard" && <Dashboard/>}  
         {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
-        {menuItem === "Reports" && <Reports/>}  
-        {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>}
+        {/* {menuItem === "Reports" && <Reports/>}  
+        {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>} */}
 
         </Box>
     </Box>

@@ -121,16 +121,6 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           }
     }
   
-    const splitwise = async(groupAddress)=>{
-      const {contract} = state;
-      try {
-          await contract.methods.splitwise(groupAddress);
-          console.log("splitwise")
-      } catch (error) {
-          console.log("Can't calculate balance split",error)
-      }
-    }
-
   return (
     <div>
       <Box 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -13,7 +13,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 let member, memberCount;
 const Payments = ({state,currentAccount}) => {
 
-  const [payements, setPayements] = React.useState([]);
+  const [payements, setPayements] = React.useState({});
 
   const getToPay = async(groupAddress)=>{
       const {contract} = state;
@@ -21,7 +21,7 @@ const Payments = ({state,currentAccount}) => {
           member=memberList
           memberCount=memberList.length
           console.log("Member and member count: ",member, memberCount)
-          let toPay=[]
+          let toPay={}
           for(let i = 0;i<memberCount;i++){
               const amount = await contract.methods.getTopay(currentAccount,member[i],groupAddress).call()
               toPay = {
@@ -112,6 +112,7 @@ const Payments = ({state,currentAccount}) => {
     console.log("Here",payements);
     console.log("Group member list: ",memberList)
   }
+  
   React.useEffect(()=>{
     getMemberedGroups(currentAccount);
   },[])
@@ -129,15 +130,20 @@ const Payments = ({state,currentAccount}) => {
     }
   }
 
+ React.useEffect(()=>{
+  memberInformation("0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A")
+ },[])
+
 
   return (
     <div style={{marginLeft: 30, marginRight: 30}}>
         <div>
             <h2>Due</h2>
         </div>
-        {/* <Button onClick={()=>getPay()}>GetPay</Button> */}
+        <Button onClick={()=>memberInformation("0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A")}>GetPay</Button>
 
-      {groupMemberInfo.groupName.map((group,index)=>(
+      {/* {groupMemberInfo.groupName.map((group,index)=>(
+
 
       <Accordion expanded={expanded === group} onChange={handleChange(group)} onClick={()=>{memberInformation(groupMemberInfo.groupAddress[index])}}>
         <AccordionSummary
@@ -150,7 +156,7 @@ const Payments = ({state,currentAccount}) => {
           </Typography>
                     
         </AccordionSummary>
-        <Button varaint="contained" onClick={()=>splitwise(groupMemberInfo.groupAddress[index])}>Splitwise</Button>
+        <Button varaint="contained" onClick={()=>{splitwise(groupMemberInfo.groupAddress[index]);}}>Splitwise</Button>
         {memberList.map((member)=>(
         <AccordionDetails>
       <Card sx={{ display: 'flex' }}>
@@ -161,8 +167,7 @@ const Payments = ({state,currentAccount}) => {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Money
-            {/* {payements ? (payements.find((item) => item.group === group && item.to === member)).amount:"---"} */}
-            {/* {payements[group][member]} */}
+            { payements[group]!== undefined ? payements["0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"]["0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"]:"----No----"}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -176,7 +181,21 @@ const Payments = ({state,currentAccount}) => {
         ))}
         
       </Accordion>
-      ))} 
+      ))}  */}
+
+      {!payements? 
+      Object.entries(payements).map(([groupAddress, members]) => (
+        <div key={groupAddress}>
+          <h2>Group Address: {groupAddress}</h2>
+          {Object.entries(members).map(([member, amount]) => (
+            <div key={member}>
+              <p>Member: {member}</p>
+              <p>Amount: {amount}</p>
+            </div>
+          ))}
+        </div>
+      ))
+      :<>Hello</>}
 
 
   
