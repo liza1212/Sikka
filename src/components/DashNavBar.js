@@ -25,6 +25,8 @@ import Payments from './Payments';
 import Reports from './Reports';
 import Groups from './Groups';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import Notlogged from './Notlogged';
+
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -34,13 +36,14 @@ const AppBar = styled(MuiAppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  backgroundColor:"#adc5b7",
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
-    }),
+    })
   }),
 }));
 
@@ -94,6 +97,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
       setCurrentAccount(null) 
       handleClose()
       setuserLogged(false)
+      setMenuItem("Notlogged")
     }
 
   const popOpen = Boolean(anchorEl);
@@ -101,14 +105,14 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
   // const logMessage=()=>{
 
   // };
-  const displayLog=(userLog)=>{
-    if(!userLog){
-      console.log("Need to display to ask user to enter their credentials")
-    }
-    else{
-      console.log("No changes")
-    }
-  };
+  // const displayLog=(userLog)=>{
+  //   if(!userLog){
+  //     console.log("Need to display to ask user to enter their credentials")
+  //   }
+  //   else{
+  //     console.log("No changes")
+  //   }
+  // };
 
     return (
   <ThemeProvider theme={mdTheme}>
@@ -217,6 +221,8 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
           <Toolbar />
         {menuItem === "Dashboard" && <Dashboard />}  
         {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
+        {userLogged===false && <Notlogged/>}
+        {/* {menuItem==="Notlogged" && <Notlogged/>} */}
         {/* {menuItem === "Reports" && <Reports/>}  
         {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>} */}
 
