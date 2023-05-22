@@ -4,12 +4,13 @@ import Web3 from 'web3';
 import Sikka from './contracts/Sikka.json'
 import UserProfile from './pages/UserProfile';
 import { Button } from '@mui/material';
+import DashNavbar from './components/DashNavBar';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
   const [state, setState] = useState({web3:null,contract:null});
   const [groupName, setGroupName] = React.useState('');
-
+  const [userLogged, setuserLogged]= React.useState(false);//To store whether the user is logged in or not.
 
   async function loadWeb3(){
     let provider;
@@ -34,7 +35,7 @@ function App() {
         provider = new Web3.providers.HttpProvider(
         "http://localhost:7545"
         );
-        // console.log("Gnache")
+        // console.log("Ganache")
         }   
         
         const web3 = new Web3(provider);
@@ -42,13 +43,22 @@ function App() {
         const account = await web3.eth.getAccounts();
         // console.log("Account",account)
         setCurrentAccount(account[0]);
-        console.log(currentAccount)
 
+        //can we do this?? - liza
+        // if(currentAccount){
+        if(account){
+          setuserLogged(true);
+          // userLogged= true;
+          console.log("User logged.")
+        }
+        else{
+          console.log("No user logged.")
+        }
         const networkId = await web3.eth.net.getId();
         console.log(web3)
         // console.log(networkId)
         const deployedNetwork = Sikka.networks[networkId];
-        console.log(deployedNetwork.address)
+        console.log("Deployed network address: ",deployedNetwork.address)
         const contract = new web3.eth.Contract(Sikka.abi,deployedNetwork.address);
         console.log(contract)// new instance 
         setState({web3:web3,contract:contract})
@@ -75,18 +85,12 @@ function App() {
     // loadWeb3()
     window.ethereum.on('accountsChanged', handleAccountsChanged);
       
-  },[currentAccount])
-
-  
-
-  
-
-  
+  },[currentAccount, userLogged])
 
   
   return (
     <div>
-        <UserProfile loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount} state={state}/>
+        <DashNavbar loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount} state={state} userLogged= {userLogged} setuserLogged={setuserLogged} />
         {/* <button onClick={loadWeb3}>Login</button>
         <form>
             <input value={groupName} onChange={(e) => setGroupName(e.target.value)} />

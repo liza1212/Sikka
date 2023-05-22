@@ -73,7 +73,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const drawerWidth = 240;
 const mdTheme = createTheme();
 
-const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
+const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, setuserLogged})=>{
+  console.log("User logged in: ",userLogged);
     const [menuItem,setMenuItem] = React.useState("Dashboard");
     const [open, setopen] = React.useState(true);
     const toggleDrawer=()=>{
@@ -92,9 +93,22 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
     const logoutWallet = ()=>{
       setCurrentAccount(null) 
       handleClose()
+      setuserLogged(false)
     }
 
   const popOpen = Boolean(anchorEl);
+
+  // const logMessage=()=>{
+
+  // };
+  const displayLog=(userLog)=>{
+    if(!userLog){
+      console.log("Need to display to ask user to enter their credentials")
+    }
+    else{
+      console.log("No changes")
+    }
+  };
 
     return (
   <ThemeProvider theme={mdTheme}>
@@ -159,18 +173,19 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           </Toolbar>
           <Divider />
           <List component="nav">
-            <ListItemButton onClick={()=>setMenuItem("Dashboard")}>
+            <ListItemButton onClick={()=>{setMenuItem("Dashboard")}} disabled={!userLogged}>
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
-          <ListItemButton onClick={()=>setMenuItem("Groups")}>
+          <ListItemButton onClick={()=>{setMenuItem("Groups")}} disabled={!userLogged}>
             <ListItemIcon>
               <GroupIcon />
             </ListItemIcon>
             <ListItemText primary="Groups" />
           </ListItemButton>
+
           {/* <ListItemButton onClick={()=>setMenuItem("Payments")}>
             <ListItemIcon>
               <AttachMoneyIcon />
@@ -185,6 +200,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           </ListItemButton> */}
           </List>
         </Drawer>
+
         {/* </Box> */}
         <Box
           component="main"
@@ -199,7 +215,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           }}
         >
           <Toolbar />
-        {menuItem === "Dashboard" && <Dashboard/>}  
+        {menuItem === "Dashboard" && <Dashboard />}  
         {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
         {/* {menuItem === "Reports" && <Reports/>}  
         {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>} */}

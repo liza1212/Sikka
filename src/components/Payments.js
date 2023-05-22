@@ -174,7 +174,7 @@ const Payments = ({state,currentAccount}) => {
           } }  ><h3>Calculate</h3></Button> 
         
       </Accordion>
-      ))}  */}
+      ))}  
 
       {!payements? 
       Object.entries(payements).map(([groupAddress, members]) => (
