@@ -78,7 +78,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
     //   eAmount: expenseAmount,
     //   eContributor: expenseContributor,
     // }
-    addExpense(currentAccount, expenseDescription, expenseAmount, expenseContributor);
+    addExpense(currentGroup, expenseDescription, expenseAmount, expenseContributor);
     // formatData.push(newExpense);
     console.log("Group Expense after new expense has been added: ", groupExpense)
   };
