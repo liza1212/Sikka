@@ -25,6 +25,8 @@ import Payments from './Payments';
 import Reports from './Reports';
 import Groups from './Groups';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import Notlogged from './Notlogged';
+
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -34,13 +36,14 @@ const AppBar = styled(MuiAppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  backgroundColor:"#adc5b7",
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
-    }),
+    })
   }),
 }));
 
@@ -73,7 +76,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const drawerWidth = 240;
 const mdTheme = createTheme();
 
-const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
+const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, setuserLogged})=>{
+  console.log("User logged in: ",userLogged);
     const [menuItem,setMenuItem] = React.useState("Dashboard");
     const [open, setopen] = React.useState(true);
     const toggleDrawer=()=>{
@@ -92,9 +96,23 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
     const logoutWallet = ()=>{
       setCurrentAccount(null) 
       handleClose()
+      setuserLogged(false)
+      setMenuItem("Notlogged")
     }
 
   const popOpen = Boolean(anchorEl);
+
+  // const logMessage=()=>{
+
+  // };
+  // const displayLog=(userLog)=>{
+  //   if(!userLog){
+  //     console.log("Need to display to ask user to enter their credentials")
+  //   }
+  //   else{
+  //     console.log("No changes")
+  //   }
+  // };
 
     return (
   <ThemeProvider theme={mdTheme}>
@@ -159,18 +177,19 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           </Toolbar>
           <Divider />
           <List component="nav">
-            <ListItemButton onClick={()=>setMenuItem("Dashboard")}>
+            <ListItemButton onClick={()=>{setMenuItem("Dashboard")}} disabled={!userLogged}>
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
-          <ListItemButton onClick={()=>setMenuItem("Groups")}>
+          <ListItemButton onClick={()=>{setMenuItem("Groups")}} disabled={!userLogged}>
             <ListItemIcon>
               <GroupIcon />
             </ListItemIcon>
             <ListItemText primary="Groups" />
           </ListItemButton>
+
           {/* <ListItemButton onClick={()=>setMenuItem("Payments")}>
             <ListItemIcon>
               <AttachMoneyIcon />
@@ -185,6 +204,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           </ListItemButton> */}
           </List>
         </Drawer>
+
         {/* </Box> */}
         <Box
           component="main"
@@ -199,8 +219,10 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state})=>{
           }}
         >
           <Toolbar />
-        {menuItem === "Dashboard" && <Dashboard/>}  
+        {menuItem === "Dashboard" && <Dashboard />}  
         {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
+        {userLogged===false && <Notlogged/>}
+        {/* {menuItem==="Notlogged" && <Notlogged/>} */}
         {/* {menuItem === "Reports" && <Reports/>}  
         {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>} */}
 

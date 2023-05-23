@@ -53,17 +53,6 @@ const Payments = ({state,currentAccount}) => {
       }
     }
 
-
-  // const fetchGroupMember = async(groupAddress)=>{
-  //     const {contract} = state
-  //     try {
-  //         const GroupMember = await contract.methods.getMemberes(currentAccount).call()
-  //         return GroupMember,GroupMember.length
-  //     } catch (error) {
-  //         console.log(`Cannot get group member of ${groupAddress}`,error)
-  //     }
-  // }
-
   const [groupMemberInfo, setgroupMemberInfo]= React.useState({groupAddress:[], groupName:[]})
 
   const getMemberedGroups= async(currentAccount)=>{
@@ -142,7 +131,7 @@ const Payments = ({state,currentAccount}) => {
         </div>
         <Button onClick={()=>memberInformation("0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A")}>GetPay</Button>
 
-      {/* {groupMemberInfo.groupName.map((group,index)=>(
+      {groupMemberInfo.groupName.map((group,index)=>(
 
 
       <Accordion expanded={expanded === group} onChange={handleChange(group)} onClick={()=>{memberInformation(groupMemberInfo.groupAddress[index])}}>
@@ -179,9 +168,13 @@ const Payments = ({state,currentAccount}) => {
     </Card>
         </AccordionDetails>  
         ))}
+        <Button variant="contained" onClick={()=>{
+          splitwise(groupMemberInfo.groupAddress[index]); 
+          getToPay(groupMemberInfo.groupAddress[index])
+          } }  ><h3>Calculate</h3></Button> 
         
       </Accordion>
-      ))}  */}
+      ))}  
 
       {!payements? 
       Object.entries(payements).map(([groupAddress, members]) => (

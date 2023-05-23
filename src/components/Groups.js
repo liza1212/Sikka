@@ -122,7 +122,9 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
     }
   
   return (
-    <div>
+    <div style={{
+      margin:30,
+    }}>
       <Box 
         component="main"
         sx={{
@@ -136,20 +138,30 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
         }}
       >
         {/* <GroupList/> */}
-        <List component="nav"  style={{ display: !openInfo ? 'block' : 'none' }}>
+        <List component="nav"  style={{ 
+          display: !openInfo ? 'block' : 'none' ,
+          }}>
             {memberedGroupInfo.groupName.map((group, index) => (
                 <ListItemButton 
                   key={index}
+                  style={{
+                    margin: 30,
+                    backgroundColor: "#e3dfd4",
+
+                  }}
                   onClick={() => {
                     setopenInfo(true);
                     setcurrentGroup(memberedGroupInfo.groupAddress[index]);
                     setcurrentGroupName(group)
+                  
                   }}
                 >
                   <ListItemText>{group}</ListItemText>
                 </ListItemButton>
               ))}
-        <Button variant="outlined" onClick={createGroup}>Create a group</Button>
+        <Button variant="outlined" onClick={createGroup} style={{
+          // backgroundColor:"#e3dfd4",
+        }}>Create a group</Button>
 
         </List>
         {openInfo &&<GroupInfo groupName={currentGroupName} state={state} currentAccount={currentAccount} openInfo={openInfo} currentGroup={currentGroup}/>}

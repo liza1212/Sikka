@@ -233,8 +233,8 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
         <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
       <Box sx={{ display: 'flex',padding:2, justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h3">{groupName}</Typography>
-        <Button variant="contained" onClick={()=>{splitwise();}}>Spiltwise</Button> 
-        <Button variant="contained" onClick={addExpenseOpen}><h3>Add expense</h3></Button> 
+        <Button variant="contained" style={{backgroundColor:"#687664"}} onClick={()=>{splitwise();}}>Spiltwise</Button> 
+        <Button variant="contained" style={{backgroundColor:"#687664"}} onClick={addExpenseOpen}><h3>Add expense</h3></Button> 
       </Box>
       <Box sx={{ display: 'flex' }}>
         <Box sx={{ flexGrow: 1, padding: 2 }}>

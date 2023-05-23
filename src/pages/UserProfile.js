@@ -2,10 +2,10 @@
 import DashNavbar from '../components/DashNavBar'
 import React from 'react'
 
-const UserProfile = ({loadWeb3,currentAccount,setCurrentAccount,state}) => {
+const UserProfile = ({loadWeb3,currentAccount,setCurrentAccount,state, userLogged}) => {
   return (
     <div>
-        <DashNavbar loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount} state={state}/>
+        <DashNavbar loadWeb3={loadWeb3} currentAccount={currentAccount} setCurrentAccount={setCurrentAccount} state={state} userLogged={userLogged}/>
         {/* <Box
           component="main"
           sx={{
