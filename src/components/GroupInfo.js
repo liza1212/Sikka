@@ -22,6 +22,8 @@ import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import {CardActionArea, CardActions } from '@mui/material';
+// import { ethToWei } from '../utils/Convert.js';
+
 
 
 const style = {
@@ -231,10 +233,10 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
       }
     }
 
-    const handlePayment=()=>{
+    const handlePayment=(member)=>{
       console.log("IF only")
-      setto("")
-      setfrom("")
+      setto(member)
+      setfrom(currentAccount)
       setpaymentModel(true)
     }
 
@@ -242,7 +244,22 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
       setAmount(e.target.value);
     }
 
+    //function to convert the eth value o wei
+    const ethToWei = (amt)=>{
+      console.log("Inside the ethtowei function");
+      return window.web3.utils.toWei(amt, 'Ether');
+      
+    }
+
     const transferFund = async(amount)=>{
+      const {contract, web3} = state;
+      try{
+        let temporary= ethToWei(amount);
+        console.log("temporary value of temporary ", amount)
+        // console.log(" Trying the transfer fund  ", amount)
+      }catch(error){
+        console.log(error)
+      }
 
     }
   
@@ -250,13 +267,13 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
     <div>
       <Tabs value={selectedTab} onChange={handleChange}>
         <Tab label="Group Info" />
-        <Tab label="Splitwise" />
+        <Tab label="Split/T" />
       </Tabs>
       {selectedTab === 0 && 
         <Box component="main" sx={{ flexGrow: 1, overflow: 'auto',display:openInfo?'block':'none',}}>
       <Box sx={{ display: 'flex',padding:2, justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h3">{groupName}</Typography>
-        <Button variant="contained" style={{backgroundColor:"#687664"}} onClick={()=>{splitwise();}}>Spiltwise</Button> 
+        <Button variant="contained" style={{backgroundColor:"#687664"}} onClick={()=>{splitwise()}}>Spilt/T</Button> 
         <Button variant="contained" style={{backgroundColor:"#687664"}} onClick={addExpenseOpen}><h3>Add expense</h3></Button> 
       </Box>
       <Box sx={{ display: 'flex' }}>
@@ -288,7 +305,6 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
           </TableContainer>
           
         </Box>
-
 
         <Box component={Paper} sx={{ width: '20%',display: 'flex', flexDirection: 'column', justifyContent: 'center',padding:2 }}>
           <Typography variant="h5" align="center" paddingBottom={3}>
@@ -420,7 +436,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
                   </CardContent>
                 </CardActionArea>
                 {/* <CardActions> */}
-                  <Button size="small" color="primary" onClick={()=>setpaymentModel(true)}>
+                  <Button size="small" color="primary" onClick={()=>{setpaymentModel(true); handlePayment(member)}}>
                     Pay
                   </Button>
                 {/* </CardActions> */}
@@ -429,7 +445,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
             
           ))}
           <Modal 
-          open={paymentOpen}
+          open={paymentModel}
           onClose={payementClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
@@ -471,7 +487,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
           
               <Button 
                 variant="outlined" 
-                onClick={()=>{transferFund()}}
+                onClick={()=>{transferFund(amount)}}
                 style={{
                   cursor:'pointer',
                   dispay:'flex',

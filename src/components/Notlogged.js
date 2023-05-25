@@ -10,7 +10,10 @@ const Notlogged = () => {
         height:500,
     }}
     >
-        Notlogged
+      <h1 class="heading">
+        Not logged
+      </h1>
+    
     </div>
   )
 }
