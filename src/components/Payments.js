@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -7,6 +7,26 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Box from '@mui/material/Box'
+import Modal from '@mui/material/Modal';
+import TextField from '@mui/material/TextField';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+const styleText={
+  display:'flex',
+  margin: 3,
+}
 
 
 
@@ -14,6 +34,16 @@ let member, memberCount;
 const Payments = ({state,currentAccount}) => {
 
   const [payements, setPayements] = React.useState({});
+  const [paymentModel, setpaymentModel] = useState(false)
+  const [amount,setAmount] = useState(0)
+  const [to,setto] =  useState("");
+  const [from,setfrom] =  useState("");
+
+  const paymentOpen= () =>  setpaymentModel(true);
+
+  const modalClose = () => {
+    setpaymentModel(false)
+  };
 
   const getToPay = async(groupAddress)=>{
       const {contract} = state;
@@ -93,6 +123,8 @@ const Payments = ({state,currentAccount}) => {
 
   const handlePayment=()=>{
     console.log("IF only")
+    setto("")
+    setfrom("")
   }
 
   const memberInformation=(groupAddress)=>{
@@ -119,9 +151,19 @@ const Payments = ({state,currentAccount}) => {
     }
   }
 
- React.useEffect(()=>{
-  memberInformation("0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A")
- },[])
+//  React.useEffect(()=>{
+//   memberInformation("0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A")
+//  },[])
+
+    const handleChangeamount=(e)=>{
+      setAmount(e.target.value);
+    }
+
+    const transferFund = async(amount)=>{
+
+    }
+
+
 
 
   return (
@@ -156,7 +198,7 @@ const Payments = ({state,currentAccount}) => {
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Money
-            { payements[group]!== undefined ? payements["0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"]["0x0D0ba0FEe2F8938B6271eE5fDcD1D9D073a6750A"]:"----No----"}
+            { payements[group]!== undefined ? payements[group][member]:"----No----"}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -207,6 +249,65 @@ const Payments = ({state,currentAccount}) => {
         </CardContent>
       </CardActionArea>
     </Card>
+
+
+    <Modal 
+          open={paymentOpen}
+          onClose={modalClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+      >
+        <Box 
+          sx={style} 
+          component="form" 
+          autocomplete="off">
+          <Typography id="modal-modal-title" variant="h6" component="h2" alignContent= "center">
+            Pay bills
+          </Typography>
+          
+          <TextField
+              sx={styleText}
+              required
+              value={amount}
+              onChange={handleChangeamount}
+              id="standard-search"
+              label="Amount"
+            />
+
+            <TextField
+              sx={styleText}
+              required
+              value={from}
+              // onChange={handleChangeContributor}
+              id="standard-search"
+              label="From"
+            />
+
+            <TextField
+              sx={styleText}
+              required
+              value={to}
+              // onChange={handleChangeAmount}
+              id="standard-search"
+              label="To"
+            />
+       
+          <Button 
+            variant="outlined" 
+            onClick={()=>{transferFund()}}
+            style={{
+              cursor:'pointer',
+              dispay:'flex',
+              alignItems:'right',
+              align: 'right'
+            }}
+          >
+              Transfer Fund
+          </Button>
+        </Box> 
+      </Modal>
+
+
     </div>
   )
 

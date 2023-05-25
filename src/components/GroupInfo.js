@@ -57,12 +57,20 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
    const [openMemInfo, setopenMemInfo]= React.useState(false);
    const [newMember, setnewMember]=React.useState("");
 
+   const [paymentModel, setpaymentModel] = React.useState(false)
+  const [amount,setAmount] = React.useState(0)
+  const [to,setto] =  React.useState("");
+  const [from,setfrom] = React.useState("");
+
+  const paymentOpen= () =>  setpaymentModel(true);
   const addExpenseOpen = () => setExpenseOpen(true);
   const addMemberOpen= () =>  setopenMemInfo(true);
+  const payementClose =()=> setpaymentModel(false);
 
   const modalClose = () => {
     setExpenseOpen(false)
-    setopenMemInfo(false);
+    setopenMemInfo(false)
+    // setpaymentModel(false)
   };
 
   const submitGroup=()=>{
@@ -221,6 +229,21 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
       } catch (error) {
           console.log("Can't calculate balance split",error)
       }
+    }
+
+    const handlePayment=()=>{
+      console.log("IF only")
+      setto("")
+      setfrom("")
+      setpaymentModel(true)
+    }
+
+    const handleChangeamount=(e)=>{
+      setAmount(e.target.value);
+    }
+
+    const transferFund = async(amount)=>{
+
     }
   
   return (
@@ -396,15 +419,70 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
                     </Typography>
                   </CardContent>
                 </CardActionArea>
-                <CardActions>
-                  <Button size="small" color="primary" onClick={()=>{}}>
+                {/* <CardActions> */}
+                  <Button size="small" color="primary" onClick={()=>setpaymentModel(true)}>
                     Pay
                   </Button>
-                </CardActions>
+                {/* </CardActions> */}
               </Card>
             </Box>
             
           ))}
+          <Modal 
+          open={paymentOpen}
+          onClose={payementClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          >
+            <Box 
+              sx={style} 
+              component="form" 
+              autocomplete="off">
+              <Typography id="modal-modal-title" variant="h6" component="h2" alignContent= "center">
+                Pay bills
+              </Typography>
+              
+              <TextField
+                  sx={styleText}
+                  required
+                  value={amount}
+                  onChange={handleChangeamount}
+                  id="standard-search"
+                  label="Amount"
+                />
+
+                <TextField
+                  sx={styleText}
+                  required
+                  value={from}
+                  // onChange={handleChangeContributor}
+                  id="standard-search"
+                  label="From"
+                />
+
+                <TextField
+                  sx={styleText}
+                  required
+                  value={to}
+                  // onChange={handleChangeAmount}
+                  id="standard-search"
+                  label="To"
+                />
+          
+              <Button 
+                variant="outlined" 
+                onClick={()=>{transferFund()}}
+                style={{
+                  cursor:'pointer',
+                  dispay:'flex',
+                  alignItems:'right',
+                  align: 'right'
+                }}
+              >
+                  Transfer Fund
+              </Button>
+            </Box> 
+          </Modal>
         </Box>}
     </div>
     
