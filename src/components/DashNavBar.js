@@ -157,7 +157,9 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
                 </Popover>
           </div>   
             ) : (
-                  <Button variant='contained' onClick={loadWeb3}>Login</Button>
+                  <Button variant='contained' onClick={loadWeb3} sx={{
+                    backgroundColor:"#707464"
+                  }}>Login</Button>
             )}
         </Toolbar>
       </AppBar>
@@ -189,19 +191,6 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
             </ListItemIcon>
             <ListItemText primary="Groups" />
           </ListItemButton>
-
-          {/* <ListItemButton onClick={()=>setMenuItem("Payments")}>
-            <ListItemIcon>
-              <AttachMoneyIcon />
-            </ListItemIcon>
-            <ListItemText primary="Payments" />
-          </ListItemButton>
-          <ListItemButton onClick={()=>setMenuItem("Reports")}>
-            <ListItemIcon>
-              <BarChartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Reports" />
-          </ListItemButton> */}
           </List>
         </Drawer>
 
@@ -222,10 +211,6 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
         {menuItem === "Dashboard" && <Dashboard />}  
         {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
         {userLogged===false && <Notlogged/>}
-        {/* {menuItem==="Notlogged" && <Notlogged/>} */}
-        {/* {menuItem === "Reports" && <Reports/>}  
-        {menuItem === "Payments" && <Payments state={state} currentAccount={currentAccount}/>} */}
-
         </Box>
     </Box>
     </ThemeProvider>
