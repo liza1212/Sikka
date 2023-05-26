@@ -120,6 +120,9 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
               console.log(`Cannot get group member of ${groupAddress}`,error)
           }
     }
+
+    console.log("The state in groups is: ",state)
+    console.log("The value of web3 in gruops is : ", state.web3)
   
   return (
     <div style={{

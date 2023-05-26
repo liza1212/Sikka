@@ -7,12 +7,12 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-const Notlogged = () => {
+const Notlogged = (userLogged) => {
   const bull = (
   <Box
     component="span"
     sx={{ 
-      display: 'inline-block', 
+      display:'inline-block',
       mx: '2px', transform: 'scale(0.8)' }}
   >
     •
@@ -31,9 +31,6 @@ const style={
     <div>
             <Card sx={style}>
       <CardContent>
-        {/* <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Word of the Day
-        </Typography> */}
         <Typography variant="h5" component="div">
           {bull}CONNECT{bull}
         </Typography>
@@ -83,12 +80,6 @@ const style={
       <CardActions>
       </CardActions>
     </Card>
-{/* <Button variant='outlined' sx={{
-  // marginRight:0,
-  // display: "flex",
-  // justifyContent:"flex-end",
-  backgroundColor:"black",
-  color:"white  "}}>LOGIN</Button> */}
     
     </div>
   )

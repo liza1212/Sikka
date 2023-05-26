@@ -78,7 +78,7 @@ const mdTheme = createTheme();
 
 const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, setuserLogged})=>{
   console.log("User logged in: ",userLogged);
-    const [menuItem,setMenuItem] = React.useState("Dashboard");
+    const [menuItem,setMenuItem] = React.useState("Homepage");
     const [open, setopen] = React.useState(true);
     const toggleDrawer=()=>{
         setopen(!open)
@@ -179,6 +179,12 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
           </Toolbar>
           <Divider />
           <List component="nav">
+            <ListItemButton onClick={()=>{setMenuItem("Homepage")}} >
+            <ListItemIcon>
+              <GroupIcon />
+            </ListItemIcon>
+            <ListItemText primary="Homepage" />
+          </ListItemButton>
             <ListItemButton onClick={()=>{setMenuItem("Dashboard")}} disabled={!userLogged}>
             <ListItemIcon>
               <DashboardIcon />
@@ -208,9 +214,10 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
           }}
         >
           <Toolbar />
-        {menuItem === "Dashboard" && <Dashboard />}  
-        {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount}/> }
-        {userLogged===false && <Notlogged/>}
+        {menuItem==="Homepage" && <Notlogged userLogged={userLogged}/>}
+        {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount} userLogged={userLogged}/> }
+        {menuItem === "Dashboard" && <Dashboard loadWeb3={loadWeb3} state={state} currentAccount={currentAccount} userLogged={userLogged}/>}  
+        {/* {userLogged===false && <Notlogged userLogged={userLogged}/>} */}
         </Box>
     </Box>
     </ThemeProvider>

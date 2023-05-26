@@ -2,7 +2,6 @@ import React,{useState,useEffect} from 'react';
 import './App.css';
 import Web3 from 'web3';
 import Sikka from './contracts/Sikka.json'
-import UserProfile from './pages/UserProfile';
 import { Button } from '@mui/material';
 import DashNavbar from './components/DashNavBar';
 
