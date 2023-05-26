@@ -246,17 +246,19 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
 
     //function to convert the eth value o wei
     const ethToWei = (amt)=>{
+      const {web3} = state;
       console.log("Inside the ethtowei function");
-      return window.web3.utils.toWei(amt, 'Ether');
+      return web3.utils.toWei(amt, 'Ether');
       
     }
 
     const transferFund = async(amount)=>{
-      const {contract, web3} = state;
+      const {contract} = state;
       try{
         let temporary= ethToWei(amount);
-        console.log("temporary value of temporary ", amount)
-        // console.log(" Trying the transfer fund  ", amount)
+        console.log(" Trying the transfer fund  ", amount)
+        console.log("temporary value of temporary ", temporary)
+        
       }catch(error){
         console.log(error)
       }
