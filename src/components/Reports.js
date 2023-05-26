@@ -2,7 +2,6 @@ import React from 'react'
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import RecentTransactions from './Orders';
 import Chart from './Chart';
 
 const Reports = () => {
@@ -39,7 +38,7 @@ const Reports = () => {
               {/* Recent Transactions */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <RecentTransactions />
+                  {/* <RecentTransactions /> */}
                 </Paper>
               </Grid>
             </Grid>

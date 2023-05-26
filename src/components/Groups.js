@@ -8,6 +8,7 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText'
 import GroupInfo from './GroupInfo';
+import Paper from '@mui/material/Paper';
 
 const style = {
   position: 'absolute',
@@ -140,17 +141,18 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
           overflow: 'auto',
         }}
       >
+        {/* <Typography variant='h4'>Grouplist</Typography> */}
         {/* <GroupList/> */}
         <List component="nav"  style={{ 
           display: !openInfo ? 'block' : 'none' ,
           }}>
             {memberedGroupInfo.groupName.map((group, index) => (
+              <Paper>
                 <ListItemButton 
                   key={index}
                   style={{
                     margin: 30,
-                    backgroundColor: "#e3dfd4",
-
+                    backgroundColor: "white",
                   }}
                   onClick={() => {
                     setopenInfo(true);
@@ -159,13 +161,22 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
                   
                   }}
                 >
-                  <ListItemText>{group}</ListItemText>
+                  <Typography  variant='h6'>{group}</Typography>
                 </ListItemButton>
+                </Paper>
               ))}
-        <Button variant="outlined" onClick={createGroup} style={{
-          // backgroundColor:"#e3dfd4",
+              <Box sx={{
+                display:'flex',
+                justifyContent:'flex-end'
+              }}>
+        <Button variant="outlined"  onClick={createGroup} style={{
+          alignSelf: 'flex-end',
+          margin: '8px',
+          fontSize: '1rem',
+          color:'green',
+          borderColor:'green'
         }}>Create a group</Button>
-
+</Box>
         </List>
         {openInfo &&<GroupInfo groupName={currentGroupName} state={state} currentAccount={currentAccount} openInfo={openInfo} currentGroup={currentGroup}/>}
 

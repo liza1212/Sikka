@@ -323,7 +323,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
               </ListItem>
             ))}
           </List>
-          <Button variant="outlined" onClick={addMemberOpen} style={{ alignSelf: 'center' }}>
+          <Button variant="outlined" onClick={addMemberOpen} style={{ alignSelf: 'center', color:'green', borderColor:'green' }}>
             Add member
           </Button>
         </Box>

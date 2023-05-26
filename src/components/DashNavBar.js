@@ -18,8 +18,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import BarChartIcon from '@mui/icons-material/BarChart';
+import HomeIcon from '@mui/icons-material/Home';
 import Dashboard from './Dashboard';
 import Payments from './Payments';
 import Reports from './Reports';
@@ -181,7 +180,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
           <List component="nav">
             <ListItemButton onClick={()=>{setMenuItem("Homepage")}} >
             <ListItemIcon>
-              <GroupIcon />
+              <HomeIcon />
             </ListItemIcon>
             <ListItemText primary="Homepage" />
           </ListItemButton>
