@@ -252,13 +252,25 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
       
     }
 
+    const weiToEth = (amt)=>{
+      const {web3} = state;
+      console.log("Inside the ethtowei function");
+      return web3.utils.fromWei(amt, 'Ether');
+      
+    }
+
     const transferFund = async(amount)=>{
       const {contract} = state;
       try{
-        let temporary= ethToWei(amount);
+        let temporary= weiToEth(amount);
         console.log(" Trying the transfer fund  ", amount)
         console.log("temporary value of temporary ", temporary)
-        
+        try {
+          await contract.methods.transfer(to,currentGroup).send({from:currentAccount,value:amount});
+            console.log("Pay successful")
+        } catch (error) {
+            console.log("Error to pay",error)
+        }
       }catch(error){
         console.log(error)
       }
@@ -438,7 +450,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
                   </CardContent>
                 </CardActionArea>
                 {/* <CardActions> */}
-                  <Button size="small" color="primary" onClick={()=>{setpaymentModel(true); handlePayment(member)}}>
+                  <Button size="small" color="primary" onClick={()=>{setpaymentModel(true); handlePayment(member);setAmount(payements[member])}}>
                     Pay
                   </Button>
                 {/* </CardActions> */}
@@ -464,7 +476,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
                   sx={styleText}
                   required
                   value={amount}
-                  onChange={handleChangeamount}
+                  // onChange={handleChangeamount}
                   id="standard-search"
                   label="Amount"
                 />

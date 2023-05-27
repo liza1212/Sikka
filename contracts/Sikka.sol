@@ -271,7 +271,7 @@ contract Sikka{
         uint indexOfSender = findMemberIndex(group.members,sender);
         uint indexOfReceiver = findMemberIndex(group.members,_recieverAddress);
         reciever.transfer(uint256(amount));
-        group.expense2dArray[indexOfSender][indexOfReceiver] -= amount;
+        group.expense2dArray[indexOfSender][indexOfReceiver] += amount;
         
     }
 
