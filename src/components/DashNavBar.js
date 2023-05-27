@@ -101,6 +101,10 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
 
   const popOpen = Boolean(anchorEl);
 
+  React.useEffect(()=>{
+    setMenuItem("Homepage")
+  },[currentAccount])
+
   // const logMessage=()=>{
 
   // };

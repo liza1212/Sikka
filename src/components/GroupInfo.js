@@ -56,10 +56,10 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
   const [expenseAmount, setexpenseAmount]= React.useState(0);
 
    //Add new member:
-   const [openMemInfo, setopenMemInfo]= React.useState(false);
-   const [newMember, setnewMember]=React.useState("");
+  const [openMemInfo, setopenMemInfo]= React.useState(false);
+  const [newMember, setnewMember]=React.useState("");
 
-   const [paymentModel, setpaymentModel] = React.useState(false)
+  const [paymentModel, setpaymentModel] = React.useState(false)
   const [amount,setAmount] = React.useState(0)
   const [to,setto] =  React.useState("");
   const [from,setfrom] = React.useState("");
@@ -68,6 +68,11 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
   const addExpenseOpen = () => setExpenseOpen(true);
   const addMemberOpen= () =>  setopenMemInfo(true);
   const payementClose =()=> setpaymentModel(false);
+
+  //FOr Tab
+  const [selectedTab, setSelectedTab] = React.useState(0);
+  //for payements
+  const [payements, setPayements] = React.useState({});
 
   const modalClose = () => {
     setExpenseOpen(false)
@@ -189,16 +194,14 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
   },[])
 
 
-  //FOr Tab
-  const [selectedTab, setSelectedTab] = React.useState(0);
+  
 
   const handleChange = (event, newValue) => {
     getToPay( )
     setSelectedTab(newValue);
   };
 
-  //for payements
-  const [payements, setPayements] = React.useState({});
+  
 
   const getToPay = async()=>{
       const {contract} = state;
@@ -266,15 +269,19 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
         console.log(" Trying the transfer fund  ", amount)
         console.log("temporary value of temporary ", temporary)
         try {
-          await contract.methods.transfer(to,currentGroup).send({from:currentAccount,value:amount});
+          await contract.methods.transfer(to,currentGroup).send({from:currentAccount,value:amount})
+          .once('receipt',async(receipt)=>{
+            await(getToPay())
+            payementClose()
             console.log("Pay successful")
+            })
         } catch (error) {
             console.log("Error to pay",error)
+            payementClose()
         }
       }catch(error){
         console.log(error)
       }
-
     }
   
   return (
