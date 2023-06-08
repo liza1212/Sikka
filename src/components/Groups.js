@@ -26,7 +26,8 @@ const styleText={
   margin: 3,
 }
 
-const Groups = ({loadWeb3,state,currentAccount}) => {
+const Groups = ({loadWeb3,state,currentAccount,openInfo,setopenInfo}) => {
+  
   const [groupNameValue, setgroupNameValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
   
@@ -59,7 +60,7 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
   const [memberedGroupInfo,setmemberedGroupInfo]= React.useState({groupAddress:[],groupName:[]})
   const [currentGroup,setcurrentGroup] = React.useState("")
   const [currentGroupName,setcurrentGroupName] = React.useState("");
-  const [openInfo, setopenInfo] = React.useState(false)
+  
 
     const addGroup= async(name)=>{
       const {contract} = state;

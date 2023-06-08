@@ -85,6 +85,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
   console.log("User logged in: ",userLogged);
     const [menuItem,setMenuItem] = React.useState("Homepage");
     const [open, setopen] = React.useState(false);
+    const [openInfo, setopenInfo] = React.useState(false)
     const toggleDrawer=()=>{
         setopen(!open)
     }
@@ -200,7 +201,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
-          <ListItemButton onClick={()=>{setMenuItem("Groups")}} disabled={!userLogged}>
+          <ListItemButton onClick={()=>{setMenuItem("Groups");setopenInfo(false)}} disabled={!userLogged}>
             <ListItemIcon>
             {menuItem == "Groups"?<GroupIcon style={{color:"#fed70a"}}/>: <GroupIcon />}
             </ListItemIcon>
@@ -224,7 +225,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
         >
           <Toolbar />
         {menuItem==="Homepage" && <Notlogged userLogged={userLogged}/>}
-        {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount} userLogged={userLogged}/> }
+        {menuItem === "Groups" && <Groups loadWeb3={loadWeb3} state={state} currentAccount={currentAccount} userLogged={userLogged} openInfo={openInfo} setopenInfo={setopenInfo}/> }
         {menuItem === "Dashboard" && <Dashboard loadWeb3={loadWeb3} state={state} currentAccount={currentAccount} userLogged={userLogged}/>}  
         {/* {userLogged===false && <Notlogged userLogged={userLogged}/>} */}
         </Box>
