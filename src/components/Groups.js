@@ -30,7 +30,7 @@ const Groups = ({loadWeb3,state,currentAccount,openInfo,setopenInfo}) => {
   
   const [groupNameValue, setgroupNameValue] = React.useState("");
   const [open, setOpen] = React.useState(false);
-  
+  const [disableButton,setdisableButton] = React.useState(false);
 
   React.useEffect(()=>{
 
@@ -91,6 +91,9 @@ const Groups = ({loadWeb3,state,currentAccount,openInfo,setopenInfo}) => {
           const memberedGroupAddress= result[0];
           const memberedGroupName = result[1];
           console.log(memberedGroupAddress, memberedGroupName);
+          if(memberedGroupAddress.includes(currentAccount)){
+            setdisableButton(true)
+          }
           setmemberedGroupInfo({groupAddress:memberedGroupAddress,groupName:memberedGroupName});
           // return memberedGroupAddress,memberedGroupName
       } catch (error) {
@@ -125,6 +128,7 @@ const Groups = ({loadWeb3,state,currentAccount,openInfo,setopenInfo}) => {
 
     console.log("The state in groups is: ",state)
     console.log("The value of web3 in gruops is : ", state.web3)
+
   
   return (
     <div style={{
@@ -170,12 +174,16 @@ const Groups = ({loadWeb3,state,currentAccount,openInfo,setopenInfo}) => {
                 display:'flex',
                 justifyContent:'flex-end'
               }}>
-        <Button variant="contained"  onClick={createGroup} style={{
+        <Button variant="contained"  onClick={createGroup} disabled={disableButton} sx={{
           alignSelf: 'flex-end',
           margin: '8px',
           fontSize: '1rem',
           color:'#fed70a',
-          backgroundColor:'#232323'
+          backgroundColor:'#232323',
+          "&.Mui-disabled": {
+            background: "#eaeaea",
+            color: "#c0c0c0"
+          }
         }}>Create a group</Button>
 </Box>
         </List>
