@@ -48,6 +48,7 @@ const BSCSCANAPIKEY = process.env.BSCSCANAPIKEY;
 
 
 
+
 module.exports = {
   plugins: [ 'truffle-plugin-verify'],
   api_keys: {
@@ -85,7 +86,20 @@ module.exports = {
         });
       },
       network_id: 97
+    },
+
+    polygon_testnet:{
+      provider: function() {
+        return new HDWalletProvider({
+          mnemonic: {
+            phrase: mnemonicPhrase
+          },
+          providerOrUrl: process.env.POLYGON_TEST_URL
+        });
+      },
+      network_id: 80001
     }
+
     //
     // An additional network, but with some advanced options…
     // advanced: {

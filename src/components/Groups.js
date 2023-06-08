@@ -151,8 +151,8 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
                 <ListItemButton 
                   key={index}
                   style={{
-                    margin: 30,
-                    backgroundColor: "white",
+                    color:'white',
+                    backgroundColor:'#232323'
                   }}
                   onClick={() => {
                     setopenInfo(true);
@@ -169,12 +169,12 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
                 display:'flex',
                 justifyContent:'flex-end'
               }}>
-        <Button variant="outlined"  onClick={createGroup} style={{
+        <Button variant="contained"  onClick={createGroup} style={{
           alignSelf: 'flex-end',
           margin: '8px',
           fontSize: '1rem',
-          color:'green',
-          borderColor:'green'
+          color:'#fed70a',
+          backgroundColor:'#232323'
         }}>Create a group</Button>
 </Box>
         </List>
@@ -207,7 +207,9 @@ const Groups = ({loadWeb3,state,currentAccount}) => {
             style={{
               cursor:'pointer',
               dispay:'felx',
-              alignItems:'right'
+              alignItems:'right',
+              color:'#fed70a',
+              backgroundColor:'#232323'
             }}
           >
               Submit

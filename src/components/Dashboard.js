@@ -34,11 +34,13 @@ const Dashboard = ({loadWeb3,state, currentAccount, userLogged}) => {
         width: 200,
         margin:40,
       }} alt='profile' />
-      <Paper variant="outlined" sx={{
+      <Paper variant="contained" sx={{
         padding: 10,
         display:'flex',
         flexDirection:'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor:'#232323',
+        color:'white'
       }}>
       <Typography variant='h5'>Account: {currentAccount}</Typography>
       <Typography>Balance: {userBalance}</Typography>

@@ -20,12 +20,9 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import GroupIcon from '@mui/icons-material/Group';
 import HomeIcon from '@mui/icons-material/Home';
 import Dashboard from './Dashboard';
-import Payments from './Payments';
-import Reports from './Reports';
 import Groups from './Groups';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import Notlogged from './Notlogged';
-
+import Sikka from "../assets/SikkaLogo.png"
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -35,7 +32,7 @@ const AppBar = styled(MuiAppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  backgroundColor:"#adc5b7",
+  backgroundColor:"#232323",
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -73,12 +70,21 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const drawerWidth = 240;
-const mdTheme = createTheme();
+const mdTheme = createTheme({
+  palette: {
+    primary: {
+      main: '#232323', 
+    },
+    secondary: {
+      main: '#fed70a', 
+    },
+  },
+});
 
 const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, setuserLogged})=>{
   console.log("User logged in: ",userLogged);
     const [menuItem,setMenuItem] = React.useState("Homepage");
-    const [open, setopen] = React.useState(true);
+    const [open, setopen] = React.useState(false);
     const toggleDrawer=()=>{
         setopen(!open)
     }
@@ -140,7 +146,7 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            SIKKA
+            <img src={Sikka} style={{height:50,padding:10}}/>
           </Typography>
           
           {currentAccount ? (
@@ -184,19 +190,19 @@ const DashNavbar=({loadWeb3,currentAccount,setCurrentAccount,state, userLogged, 
           <List component="nav">
             <ListItemButton onClick={()=>{setMenuItem("Homepage")}} >
             <ListItemIcon>
-              <HomeIcon />
+              {menuItem == "Homepage"?<HomeIcon style={{color:"#fed70a"}}/>:<HomeIcon />}
             </ListItemIcon>
             <ListItemText primary="Homepage" />
           </ListItemButton>
             <ListItemButton onClick={()=>{setMenuItem("Dashboard")}} disabled={!userLogged}>
             <ListItemIcon>
-              <DashboardIcon />
+            {menuItem == "Dashboard"?<DashboardIcon style={{color:"#fed70a"}}/>:<DashboardIcon />}
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
           <ListItemButton onClick={()=>{setMenuItem("Groups")}} disabled={!userLogged}>
             <ListItemIcon>
-              <GroupIcon />
+            {menuItem == "Groups"?<GroupIcon style={{color:"#fed70a"}}/>: <GroupIcon />}
             </ListItemIcon>
             <ListItemText primary="Groups" />
           </ListItemButton>
