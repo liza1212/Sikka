@@ -459,7 +459,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
                   </CardContent>
                 </CardActionArea>
                 {/* <CardActions> */}
-                  <Button size="small" color="primary" onClick={()=>{setpaymentModel(true); handlePayment(member);setAmount(payements[member])}}>
+                  <Button size="small" style={{ color:'#fed70a', backgroundColor:'#232323'}} onClick={()=>{setpaymentModel(true); handlePayment(member);setAmount(payements[member])}}>
                     Pay
                   </Button>
                 {/* </CardActions> */}
