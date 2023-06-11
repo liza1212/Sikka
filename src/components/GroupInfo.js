@@ -368,7 +368,7 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
               value={expenseDescription}
               onChange={handleChangeDescription}
               id="standard-search"
-              label="Expense Descrition"
+              label="Expense Description"
             />
 
             <TextField
@@ -459,7 +459,9 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
                   </CardContent>
                 </CardActionArea>
                 {/* <CardActions> */}
-                  <Button size="small" style={{ color:'#fed70a', backgroundColor:'#232323'}} onClick={()=>{setpaymentModel(true); handlePayment(member);setAmount(payements[member])}}>
+                  <Button size="small" disabled={payements[member] == 0 || payements[member] == undefined ? true:false} 
+                    sx={{ color:'#fed70a', backgroundColor:'#232323',"&.Mui-disabled": {background: "#eaeaea",color: "#c0c0c0"}}} 
+                    onClick={()=>{setpaymentModel(true); handlePayment(member);setAmount(payements[member])}}>
                     Pay
                   </Button>
                 {/* </CardActions> */}
@@ -515,7 +517,9 @@ const GroupInfo = ({currentGroup, groupName, state, currentAccount,openInfo}) =>
                   cursor:'pointer',
                   dispay:'flex',
                   alignItems:'right',
-                  align: 'right'
+                  align: 'right',
+                  color:'#fed70a', 
+                  backgroundColor:'#232323'
                 }}
               >
                   Transfer Fund
